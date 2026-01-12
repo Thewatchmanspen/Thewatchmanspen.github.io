@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Logos | The Watchman’s Pen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- CSS -->
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: #0b0b0b;
+    color: #ffffff;
+  }
+
+  .top-bar {
+    height: 60px;
+    background-color: #111111;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
+  .top-bar a {
+    color: #ffffff;
+    text-decoration: none;
+    margin-right: 15px;
+    font-size: 1.4rem;
+  }
+
+  .content {
+    padding: 80px 15px 40px;
+    max-width: 480px;
+    margin: auto;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+
+  .item {
+    background-color: #111111;
+    border-radius: 16px;
+    padding: 15px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.7);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.8);
+  }
+
+  .item img {
+    width: 100%;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  .item img:hover {
+    transform: scale(1.02);
+  }
+
+  .price {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.5rem;
+    margin: 12px 0;
+    color: #ffffff;
+    text-shadow:
+       1px 1px 0 #222,
+      -1px -1px 0 #444,
+       1px -1px 0 #444,
+      -1px 1px 0 #444,
+       0 0 8px #999;
+  }
+
+  .likes {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-bottom: 10px;
+  }
+
+  .likes button {
+    background-color: transparent;
+    color: #ffffff;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: transform 0.1s;
+  }
+
+  .likes button.active {
+    color: gold;
+    animation: bounce 0.2s;
+  }
+
+  @keyframes bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+  }
+
+  .comments {
+    margin-top: 10px;
+    font-size: 0.95rem;
+    line-height: 1.4rem;
+  }
+
+  .comments p {
+    margin: 5px 0;
+    background-color: #1a1a1a;
+    padding: 6px 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+  }
+
+  .comment-input {
+    display: flex;
+    margin-top: 6px;
+    gap: 5px;
+  }
+
+  .comment-input input {
+    flex: 1;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: none;
+    outline: none;
+    background-color: #1a1a1a;
+    color: #fff;
+  }
+
+  .comment-input input::placeholder {
+    color: #bbb;
+  }
+
+  .comment-input button {
+    padding: 7px 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #ffffff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+
+  .comment-input button:hover {
+    transform: translateY(-2px);
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-top: 30px;
+  }
+
+  #lightbox {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+  }
+
+  #lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+  }
+
+  #lightbox.show {
+    display: flex;
+  }
+
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <a href="products.html">←</a>
+  Logos
+</div>
+
+<div class="content">
+  <h1>Logo Designs</h1>
+
+  <div class="gallery">
+
+    <!-- Logo 1 -->
+    <div class="item" data-id="logo1">
+      <img src="portfolio 2.jpg" onclick="openLightbox(this)">
+      <div class="price">N$ 120.00</div>
+      <div class="likes">
+        <button id="like-logo1" onclick="vote('logo1','like')">👍 <span>1023</span></button>
+        <button id="dislike-logo1" onclick="vote('logo1','dislike')">👎 <span>14</span></button>
+      </div>
+      <div class="comments" id="comments-logo1">
+        <p>JohnDoe: Amazing design!</p>
+        <p>SarahL: Exactly what I needed.</p>
+      </div>
+      <div class="comment-input">
+        <input type="text" placeholder="Add a comment" id="input-logo1">
+        <button onclick="addComment('logo1')">Send</button>
+      </div>
+    </div>
+
+    <!-- Logo 2 -->
+    <div class="item" data-id="logo2">
+      <img src="portfolio 3.jpg" onclick="openLightbox(this)">
+      <div class="price">N$ 120.00</div>
+      <div class="likes">
+        <button id="like-logo2" onclick="vote('logo2','like')">👍 <span>1145</span></button>
+        <button id="dislike-logo2" onclick="vote('logo2','dislike')">👎 <span>7</span></button>
+      </div>
+      <div class="comments" id="comments-logo2">
+        <p>AliceW: Stunning colors!</p>
+        <p>KevinP: Looks great on my website.</p>
+      </div>
+      <div class="comment-input">
+        <input type="text" placeholder="Add a comment" id="input-logo2">
+        <button onclick="addComment('logo2')">Send</button>
+      </div>
+    </div>
+
+    <!-- Logo 3 -->
+    <div class="item" data-id="logo3">
+      <img src="portfolio 4.jpg" onclick="openLightbox(this)">
+      <div class="price">N$ 120.00</div>
+      <div class="likes">
+        <button id="like-logo3" onclick="vote('logo3','like')">👍 <span>1098</span></button>
+        <button id="dislike-logo3" onclick="vote('logo3','dislike')">👎 <span>12</span></button>
+      </div>
+      <div class="comments" id="comments-logo3">
+        <p>LauraK: Perfect for my brand!</p>
+        <p>TomH: Loved the style.</p>
+      </div>
+      <div class="comment-input">
+        <input type="text" placeholder="Add a comment" id="input-logo3">
+        <button onclick="addComment('logo3')">Send</button>
+      </div>
+    </div>
+
+    <!-- Logo 4 -->
+    <div class="item" data-id="logo4">
+      <img src="portfolio 6.jpg" onclick="openLightbox(this)">
+      <div class="price">N$ 120.00</div>
+      <div class="likes">
+        <button id="like-logo4" onclick="vote('logo4','like')">👍 <span>1207</span></button>
+        <button id="dislike-logo4" onclick="vote('logo4','dislike')">👎 <span>9</span></button>
+      </div>
+      <div class="comments" id="comments-logo4">
+        <p>EmilyG: Highly recommended!</p>
+        <p>ChrisB: Looks amazing.</p>
+      </div>
+      <div class="comment-input">
+        <input type="text" placeholder="Add a comment" id="input-logo4">
+        <button onclick="addComment('logo4')">Send</button>
+      </div>
+    </div>
+
+    <!-- Logo 5 -->
+    <div class="item" data-id="logo5">
+      <img src="portfolio 7.jpg" onclick="openLightbox(this)">
+      <div class="price">N$ 120.00</div>
+      <div class="likes">
+        <button id="like-logo5" onclick="vote('logo5','like')">👍 <span>1034</span></button>
+        <button id="dislike-logo5" onclick="vote('logo5','dislike')">👎 <span>6</span></button>
+      </div>
+      <div class="comments" id="comments-logo5">
+        <p>SamW: Excellent quality!</p>
+        <p>NinaF: Perfect for my startup.</p>
+      </div>
+      <div class="comment-input">
+        <input type="text" placeholder="Add a comment" id="input-logo5">
+        <button onclick="addComment('logo5')">Send</button>
+      </div>
+    </div>
+
+    <!-- Logo 6 -->
+    <div class="item" data-id="logo6">
+      <img src="portfolio 8.jpg" onclick="openLightbox(this)">
+      <div class="price">N$ 120.00</div>
+      <div class="likes">
+        <button id="like-logo6" onclick="vote('logo6','like')">👍 <span>1105</span></button>
+        <button id="dislike-logo6" onclick="vote('logo6','dislike')">👎 <span>8</span></button>
+      </div>
+      <div class="comments" id="comments-logo6">
+        <p>VictorZ: Looks very professional.</p>
+        <p>SophieH: Love the detail!</p>
+      </div>
+      <div class="comment-input">
+        <input type="text" placeholder="Add a comment" id="input-logo6">
+        <button onclick="addComment('logo6')">Send</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 The Watchman’s Pen
+  </footer>
+</div>
+
+<audio id="pop-sound" src="pop.mp3" preload="auto"></audio>
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img">
+</div>
+
+<script>
+  // Lightbox
+  function openLightbox(img) {
+    document.getElementById('lightbox-img').src = img.src;
+    document.getElementById('lightbox').classList.add('show');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('show');
+  }
+
+  const logos = ['logo1','logo2','logo3','logo4','logo5','logo6'];
+
+  logos.forEach(id => {
+    const likeBtn = document.getElementById('like-'+id);
+    const dislikeBtn = document.getElementById('dislike-'+id);
+
+    if(localStorage.getItem('likes-'+id)) {
+      likeBtn.querySelector('span').innerText = localStorage.getItem('likes-'+id);
+    }
+    if(localStorage.getItem('dislikes-'+id)) {
+      dislikeBtn.querySelector('span').innerText = localStorage.getItem('dislikes-'+id);
+    }
+    if(localStorage.getItem('vote-'+id) === 'like') likeBtn.classList.add('active');
+    if(localStorage.getItem('vote-'+id) === 'dislike') dislikeBtn.classList.add('active');
+    if(localStorage.getItem('comments-'+id)) {
+      document.getElementById('comments-'+id).innerHTML = localStorage.getItem('comments-'+id);
+    }
+  });
+
+  function vote(id,type){
+    const pop = document.getElementById('pop-sound');
+    const likeBtn = document.getElementById('like-'+id);
+    const dislikeBtn = document.getElementById('dislike-'+id);
+    let likes = parseInt(likeBtn.querySelector('span').innerText);
+    let dislikes = parseInt(dislikeBtn.querySelector('span').innerText);
+    const current = localStorage.getItem('vote-'+id);
+    let changed = false;
+
+    if(current===type){
+      // undo vote
+      if(type==='like'){ likes--; likeBtn.classList.remove('active'); changed=true; }
+      if(type==='dislike'){ dislikes--; dislikeBtn.classList.remove('active'); changed=true; }
+      localStorage.removeItem('vote-'+id);
+    } else {
+      // remove previous opposite vote
+      if(current==='like'){ likes--; likeBtn.classList.remove('active'); changed=true; }
+      if(current==='dislike'){ dislikes--; dislikeBtn.classList.remove('active'); changed=true; }
+
+      // add new vote
+      if(type==='like'){ likes++; likeBtn.classList.add('active'); changed=true; }
+      if(type==='dislike'){ dislikes++; dislikeBtn.classList.add('active'); changed=true; }
+
+      localStorage.setItem('vote-'+id,type);
+    }
+
+    if(changed) pop.play();
+    likeBtn.querySelector('span').innerText = likes;
+    dislikeBtn.querySelector('span').innerText = dislikes;
+    localStorage.setItem('likes-'+id,likes);
+    localStorage.setItem('dislikes-'+id,dislikes);
+  }
+
+  function addComment(id){
+    const input = document.getElementById('input-'+id);
+    if(input.value.trim()==='') return;
+    const commentsDiv = document.getElementById('comments-'+id);
+    const p = document.createElement('p');
+    p.innerText = 'Visitor: '+input.value;
+    commentsDiv.appendChild(p);
+    localStorage.setItem('comments-'+id, commentsDiv.innerHTML);
+    input.value='';
+  }
+</script>
+</body>
+  </html>
