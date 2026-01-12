@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Products | The Watchman’s Pen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { margin:0; font-family:system-ui, sans-serif; background:#0b0b0b; color:#fff; }
+.top-bar { height:60px; background:#111; display:flex; align-items:center; padding:0 20px; font-weight:bold; font-size:1.2rem; box-shadow:0 2px 8px rgba(0,0,0,0.6); }
+.top-bar a { color:#fff; text-decoration:none; margin-right:15px; font-size:1.4rem; }
+.content { padding:80px 15px 40px; max-width:480px; margin:auto; }
+h1 { text-align:center; margin-bottom:20px; }
+.tab-menu { display:flex; justify-content:center; gap:10px; margin-bottom:25px; }
+.tab-menu button { background:#222; color:#fff; border:none; padding:8px 14px; border-radius:10px; cursor:pointer; font-weight:bold; transition:0.2s; }
+.tab-menu button.active { background:gold; color:#000; }
+.tab-menu button:hover { background:#333; }
+.gallery { display:grid; grid-template-columns:1fr; gap:25px; }
+.item { background:#111; border-radius:16px; padding:15px; box-shadow:0 6px 20px rgba(0,0,0,0.7); transition:0.2s; }
+.item:hover { transform:translateY(-5px); box-shadow:0 12px 24px rgba(0,0,0,0.8); }
+.item img { width:100%; border-radius:12px; cursor:pointer; transition:0.2s; }
+.item img:hover { transform:scale(1.02); }
+.price { text-align:center; font-weight:bold; font-size:1.5rem; margin:12px 0; color:#fff;
+  text-shadow:1px 1px 0 #222,-1px -1px 0 #444,1px -1px 0 #444,-1px 1px 0 #444,0 0 8px #999; }
+.likes { display:flex; justify-content:center; gap:25px; margin-bottom:10px; }
+.likes button { background:transparent; color:#fff; border:none; font-size:1.4rem; cursor:pointer; display:flex; align-items:center; gap:6px; transition:0.1s; }
+.likes button.active { color:gold; animation:bounce 0.2s; }
+@keyframes bounce { 0%{transform:scale(1);} 50%{transform:scale(1.4);} 100%{transform:scale(1);} }
+.comments-tab { background:#1a1a1a; padding:8px 12px; border-radius:10px; cursor:pointer; font-size:0.95rem; margin-top:8px; width:fit-content; }
+.comments-content { display:none; margin-top:8px; font-size:0.95rem; }
+.comments-content p { background:#222; padding:6px 10px; border-radius:8px; margin:4px 0; box-shadow:0 2px 6px rgba(0,0,0,0.5); }
+.comment-input { display:flex; margin-top:6px; gap:5px; }
+.comment-input input { flex:1; padding:7px 10px; border-radius:8px; border:none; outline:none; background:#1a1a1a; color:#fff; }
+.comment-input input::placeholder { color:#bbb; }
+.comment-input button { padding:7px 12px; border-radius:8px; border:none; background:#fff; color:#000; font-weight:bold; cursor:pointer; transition:0.1s; }
+.comment-input button:hover { transform:translateY(-2px); }
+footer { text-align:center; font-size:0.85rem; opacity:0.7; margin-top:30px; }
+#lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); justify-content:center; align-items:center; z-index:10000; }
+#lightbox img { max-width:90%; max-height:90%; border-radius:10px; }
+#lightbox.show { display:flex; }
+</style>
+</head>
+<body>
+
+<div class="top-bar"><a href="index.html">← Home</a> Products</div>
+
+<div class="content">
+<h1>Our Products</h1>
+
+<div class="tab-menu">
+  <button class="active" onclick="switchTab('posters',this)">Posters & Flyers</button>
+  <button onclick="switchTab('logos',this)">Logos</button>
+</div>
+
+<!-- Posters Tab -->
+<div class="gallery" id="posters">
+  <!-- Poster items -->
+  <div class="item" data-id="poster1"><img src="poster 1.png" onclick="openLightbox(this)"><div class="price">N$ 120.00</div>
+    <div class="likes"><button id="like-poster1" onclick="vote('poster1','like')">👍 <span>1023</span></button><button id="dislike-poster1" onclick="vote('poster1','dislike')">👎 <span>14</span></button></div>
+    <div class="comments-tab" onclick="toggleComments('poster1')">3 comments</div>
+    <div class="comments-content" id="comments-poster1"><p>JohnD: Stunning poster!</p><p>LisaM: Exactly what I needed!</p></div>
+    <div class="comment-input"><input placeholder="Add a comment" id="input-poster1"><button onclick="addComment('poster1')">Send</button></div>
+  </div>
+  <div class="item" data-id="poster2"><img src="poster 2.png" onclick="openLightbox(this)"><div class="price">N$ 120.00</div>
+    <div class="likes"><button id="like-poster2" onclick="vote('poster2','like')">👍 <span>1045</span></button><button id="dislike-poster2" onclick="vote('poster2','dislike')">👎 <span>12</span></button></div>
+    <div class="comments-tab" onclick="toggleComments('poster2')">2 comments</div>
+    <div class="comments-content" id="comments-poster2"><p>AliceW: Perfect colors!</p></div>
+    <div class="comment-input"><input placeholder="Add a comment" id="input-poster2"><button onclick="addComment('poster2')">Send</button></div>
+  </div>
+  <div class="item" data-id="poster3"><img src="poster 3.png" onclick="openLightbox(this)"><div class="price">N$ 120.00</div>
+    <div class="likes"><button id="like-poster3" onclick="vote('poster3','like')">👍 <span>1072</span></button><button id="dislike-poster3" onclick="vote('poster3','dislike')">👎 <span>8</span></button></div>
+    <div class="comments-tab" onclick="toggleComments('poster3')">4 comments</div>
+    <div class="comments-content" id="comments-poster3"><p>KevinP: Eye-catching!</p><p>MaryK: Love the design!</p></div>
+    <div class="comment-input"><input placeholder="Add a comment" id="input-poster3"><button onclick="addComment('poster3')">Send</button></div>
+  </div>
+  <div class="item" data-id="poster4"><img src="poster 4.png" onclick="openLightbox(this)"><div class="price">N$ 120.00</div>
+    <div class="likes"><button id="like-poster4" onclick="vote('poster4','like')">👍 <span>1101</span></button><button id="dislike-poster4" onclick="vote('poster4','dislike')">👎 <span>6</span></button></div>
+    <div class="comments-tab" onclick="toggleComments('poster4')">2 comments</div>
+    <div class="comments-content" id="comments-poster4"><p>AnnaS: Fantastic poster!</p></div>
+    <div class="comment-input"><input placeholder="Add a comment" id="input-poster4"><button onclick="addComment('poster4')">Send</button></div>
+  </div>
+  <div class="item" data-id="poster5"><img src="poster 5.jpg" onclick="openLightbox(this)"><div class="price">N$ 120.00</div>
+    <div class="likes"><button id="like-poster5" onclick="vote('poster5','like')">👍 <span>1032</span></button><button id="dislike-poster5" onclick="vote('poster5','dislike')">👎 <span>10</span></button></div>
+    <div class="comments-tab" onclick="toggleComments('poster5')">3 comments</div>
+    <div class="comments-content" id="comments-poster5"><p>TomH: Amazing work!</p></div>
+    <div class="comment-input"><input placeholder="Add a comment" id="input-poster5"><button onclick="addComment('poster5')">Send</button></div>
+  </div>
+  <div class="item" data-id="poster6"><img src="poster 6.jpg" onclick="openLightbox(this)"><div class="price">N$ 120.00</div>
+    <div class="likes"><button id="like-poster6" onclick="vote('poster6','like')">👍 <span>1089</span></button><button id="dislike-poster6" onclick="vote('poster6','dislike')">👎 <span>15</span></button></div>
+    <div class="comments-tab" onclick="toggleComments('poster6')">2 comments</div>
+    <div class="comments-content" id="comments-poster6"><p>JaneF: Looks professional!</p></div>
+    <div class="comment-input"><input placeholder="Add a comment" id="input-poster6"><button onclick="addComment('poster6')">Send</button></div>
+  </div>
+  <div class="item" data-id="poster7"><img src="poster 7.jpg" onclick="openLightbox(this)"><div class="price">N$ 120.00</div>
+    <div class="likes"><button id="like-poster7" onclick="vote('poster7','like')">👍 <span>1027</span></button><button id="dislike-poster7" onclick="vote('poster7','dislike')">👎 <span>9</span></button></div>
+    <div class="comments-tab" onclick="toggleComments('poster7')">4 comments</div>
+    <div class="comments-content" id="comments-poster7"><p>ChrisL: Highly recommend!</p><p>SarahB: Very eye-catching.</p></div>
+    <div class="comment-input"><input placeholder="Add a comment" id="input-poster7"><button onclick="addComment('poster7')">Send</button></div>
+  </div>
+  <div class="item" data-id="poster8"><img src="poster.png" onclick="openLightbox(this)"><div class="price">N$ 120.00</div>
+    <div class="likes"><button id="like-poster8" onclick="vote('poster8','like')">👍 <span>1065</span></button><button id="dislike-poster8" onclick="vote('poster8','dislike')">👎 <span>11</span></button></div>
+    <div class="comments-tab" onclick="toggleComments('poster8')">3 comments</div>
+    <div class="comments-content" id="comments-poster8"><p>MarkR: Beautiful colors!</p></div>
+    <div class="comment-input"><input placeholder="Add a comment" id="input-poster8"><button onclick="addComment('poster8')">Send</button></div>
+  </div>
+</div>
+
+<!-- Logos Tab -->
+<div class="gallery" id="logos" style="display:none;">
+  <div class="item" data-id="logo2">
+    <img src="portfolio 2.jpg" onclick="openLightbox(this)">
+    <div class="price">N$ 120.00</div>
+    <div class="likes">
+      <button id="like-logo2" onclick="vote('logo2','like')">👍 <span>1145</span></button>
+      <button id="dislike-logo2" onclick="vote('logo2','dislike')">👎 <span>7</span></button>
+    </div>
+    <div class="comments-tab" onclick="toggleComments('logo2')">3 comments</div>
+    <div class="comments-content" id="comments-logo2">
+      <p>AliceW: Stunning colors!</p>
+      <p>KevinP: Looks great on my website.</p>
+    </div>
+    <div class="comment-input">
+      <input type="text" placeholder="Add a comment" id="input-logo2">
+      <button onclick="addComment('logo2')">Send</button>
+    </div>
+  </div>
+  <!-- Add more logos similarly -->
+</div>
+
+<footer>© 2026 The Watchman’s Pen</footer>
+
+</div>
+<audio id="pop-sound" src="pop.mp3" preload="auto"></audio>
+<div id="lightbox" onclick="closeLightbox()"><img id="lightbox-img"></div>
+
+<script>
+// Switch tabs
+function switchTab(tab,btn){
+  document.getElementById('posters').style.display = tab==='posters'?'grid':'none';
+  document.getElementById('logos').style.display = tab==='logos'?'grid':'none';
+  document.querySelectorAll('.tab-menu button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// Lightbox
+function openLightbox(img){document.getElementById('lightbox-img').src=img.src; document.getElementById('lightbox').classList.add('show');}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('show');}
+
+// Likes/Dislikes
+const products = ['poster1','poster2','poster3','poster4','poster5','poster6','poster7','poster8','logo2'];
+products.forEach(id=>{
+  const likeBtn=document.getElementById('like-'+id);
+  const dislikeBtn=document.getElementById('dislike-'+id);
+  if(localStorage.getItem('likes-'+id)) likeBtn.querySelector('span').innerText = localStorage.getItem('likes-'+id);
+  if(localStorage.getItem('dislikes-'+id)) dislikeBtn.querySelector('span').innerText = localStorage.getItem('dislikes-'+id);
+  if(localStorage.getItem('vote-'+id)==='like') likeBtn.classList.add('active');
+  if(localStorage.getItem('vote-'+id)==='dislike') dislikeBtn.classList.add('active');
+  if(localStorage.getItem('comments-'+id)) document.getElementById('comments-'+id).innerHTML = localStorage.getItem('comments-'+id);
+});
+
+function vote(id,type){
+  const pop=document.getElementById('pop-sound');
+  const likeBtn=document.getElementById('like-'+id);
+  const dislikeBtn=document.getElementById('dislike-'+id);
+  let likes=parseInt(likeBtn.querySelector('span').innerText);
+  let dislikes=parseInt(dislikeBtn.querySelector('span').innerText);
+  const current=localStorage.getItem('vote-'+id);
+  let changed=false;
+  if(current===type){
+    if(type==='like'){likes--; likeBtn.classList.remove('active'); changed=true;}
+    if(type==='dislike'){dislikes--; dislikeBtn.classList.remove('active'); changed=true;}
+    localStorage.removeItem('vote-'+id);
+  } else {
+    if(current==='like'){likes--; likeBtn.classList.remove('active'); changed=true;}
+    if(current==='dislike'){dislikes--; dislikeBtn.classList.remove('active'); changed=true;}
+    if(type==='like'){likes++; likeBtn.classList.add('active'); changed=true;}
+    if(type==='dislike'){dislikes++; dislikeBtn.classList.add('active'); changed=true;}
+    localStorage.setItem('vote-'+id,type);
+  }
+  if(changed) pop.play();
+  likeBtn.querySelector('span').innerText=likes;
+  dislikeBtn.querySelector('span').innerText=dislikes;
+  localStorage.setItem('likes-'+id,likes);
+  localStorage.setItem('dislikes-'+id,dislikes);
+}
+
+// Comments toggle
+function toggleComments(id){
+  const c=document.getElementById('comments-'+id);
+  c.style.display=c.style.display==='block'?'none':'block';
+}
+
+// Add comment
+function addComment(id){
+  const input=document.getElementById('input-'+id);
+  if(input.value.trim()==='') return;
+  const commentsDiv=document.getElementById('comments-'+id);
+  const p=document.createElement('p'); p.innerText='Visitor: '+input.value;
+  commentsDiv.appendChild(p);
+  localStorage.setItem('comments-'+id,commentsDiv.innerHTML);
+  input.value='';
+}
+</script>
+
+</body>
+  </html>
