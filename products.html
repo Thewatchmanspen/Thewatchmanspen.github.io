@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Products | The Watchman’s Pen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { margin:0; font-family:system-ui,sans-serif; background:#0b0b0b; color:#fff; text-align:center; position:relative; min-height:100vh; }
+h1 { margin-top:60px; font-size:2rem; margin-bottom:40px; }
+.tab-container { display:flex; justify-content:center; gap:40px; margin-bottom:40px; }
+.tab-container button { padding:20px 60px; font-size:1.5rem; font-weight:bold; border:none; border-radius:15px; background:#fff; color:#000; cursor:pointer; transition:0.2s; box-shadow:0 4px 12px rgba(0,0,0,0.4); }
+.tab-container button:hover { transform:scale(1.05); }
+.tab-container button.active { background:gold; color:#000; box-shadow:0 6px 18px rgba(0,0,0,0.6); }
+
+.gallery { display:grid; grid-template-columns:1fr; gap:25px; max-width:480px; margin:auto; margin-bottom:100px; }
+.item { background:#111; border-radius:16px; padding:15px; box-shadow:0 6px 20px rgba(0,0,0,0.7); transition:0.2s; }
+.item:hover { transform:translateY(-5px); box-shadow:0 12px 24px rgba(0,0,0,0.8); }
+.item img { width:100%; border-radius:12px; cursor:pointer; transition:0.2s; }
+.item img:hover { transform:scale(1.02); }
+
+.price { text-align:center; font-weight:bold; font-size:1.5rem; margin:12px 0; color:#fff;
+  text-shadow:1px 1px 0 #222,-1px -1px 0 #444,1px -1px 0 #444,-1px 1px 0 #444,0 0 8px #999; }
+
+.likes { display:flex; justify-content:center; gap:25px; margin-bottom:10px; }
+.likes button { background:transparent; color:#fff; border:none; font-size:1.4rem; cursor:pointer; display:flex; align-items:center; gap:6px; transition:0.1s; }
+.likes button.active { color:gold; animation:bounce 0.2s; }
+@keyframes bounce { 0%{transform:scale(1);} 50%{transform:scale(1.4);} 100%{transform:scale(1);} }
+
+.comments-tab { background:#1a1a1a; padding:8px 12px; border-radius:10px; cursor:pointer; font-size:0.95rem; margin-top:8px; width:fit-content; margin-left:auto; margin-right:auto; }
+.comments-content { display:none; margin-top:8px; font-size:0.95rem; }
+.comments-content p { background:#222; padding:6px 10px; border-radius:8px; margin:4px 0; box-shadow:0 2px 6px rgba(0,0,0,0.5); }
+.comment-input { display:flex; margin-top:6px; gap:5px; justify-content:center; }
+.comment-input input { flex:1; max-width:250px; padding:7px 10px; border-radius:8px; border:none; outline:none; background:#1a1a1a; color:#fff; }
+.comment-input input::placeholder { color:#bbb; }
+.comment-input button { padding:7px 12px; border-radius:8px; border:none; background:#fff; color:#000; font-weight:bold; cursor:pointer; transition:0.1s; }
+.comment-input button:hover { transform:translateY(-2px); }
+
+footer { text-align:center; font-size:0.85rem; opacity:0.7; margin-bottom:30px; }
+
+#lightbox { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); justify-content:center; align-items:center; z-index:10000; }
+#lightbox img { max-width:90%; max-height:90%; border-radius:10px; }
+#lightbox.show { display:flex; }
+
+/* Navigation buttons */
+#homeButton { position:fixed; top:20px; left:20px; padding:12px 18px; font-size:1rem; font-weight:bold; border-radius:10px; background:#fff; color:#000; border:none; cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.5); transition:0.2s; }
+#homeButton:hover { transform:scale(1.05); }
+#contactButton { position:fixed; bottom:20px; left:50%; transform:translateX(-50%); padding:15px 40px; font-size:1.2rem; font-weight:bold; border-radius:12px; background:#fff; color:#000; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.5); transition:0.2s; }
+#contactButton:hover { transform:scale(1.05); }
+</style>
+</head>
+<body>
+
+<!-- Navigation Buttons -->
+<button id="homeButton" onclick="window.location.href='index.html'">Home</button>
+
+<h1>Our Products</h1>
+
+<div class="tab-container">
+  <button id="logosTab" onclick="switchTab('logos',this)">Logos</button>
+  <button id="postersTab" onclick="switchTab('posters',this)">Posters</button>
+</div>
+
+<!-- Logos Gallery -->
+<div class="gallery" id="logos" style="display:none;">
+  <div class="item" data-id="logo2">
+    <img src="portfolio 2.jpg" onclick="openLightbox(this)">
+    <div class="price">N$ 120.00</div>
+    <div class="likes">
+      <button id="like-logo2" onclick="vote('logo2','like')">👍 <span>1145</span></button>
+      <button id="dislike-logo2" onclick="vote('logo2','dislike')">👎 <span>7</span></button>
+    </div>
+    <div class="comments-tab" onclick="toggleComments('logo2')">3 comments</div>
+    <div class="comments-content" id="comments-logo2">
+      <p>AliceW: Stunning colors!</p>
+      <p>KevinP: Looks great on my website.</p>
+      <p>MarkT: Highly recommend!</p>
+    </div>
+    <div class="comment-input">
+      <input type="text" placeholder="Add a comment" id="input-logo2">
+      <button onclick="addComment('logo2')">Send</button>
+    </div>
+  </div>
+  <!-- Add other logos (portfolio 3.jpg, 4.jpg, 6.jpg, 7.jpg, 8.jpg) similarly with unique IDs -->
+</div>
+
+<!-- Posters Gallery -->
+<div class="gallery" id="posters" style="display:none;">
+  <div class="item" data-id="poster1">
+    <img src="poster 1.png" onclick="openLightbox(this)">
+    <div class="price">N$ 100.00</div>
+    <div class="likes">
+      <button id="like-poster1" onclick="vote('poster1','like')">👍 <span>1023</span></button>
+      <button id="dislike-poster1" onclick="vote('poster1','dislike')">👎 <span>14</span></button>
+    </div>
+    <div class="comments-tab" onclick="toggleComments('poster1')">3 comments</div>
+    <div class="comments-content" id="comments-poster1">
+      <p>JohnD: Stunning poster!</p>
+      <p>LisaM: Exactly what I needed!</p>
+      <p>SamK: Perfect design!</p>
+    </div>
+    <div class="comment-input">
+      <input type="text" placeholder="Add a comment" id="input-poster1">
+      <button onclick="addComment('poster1')">Send</button>
+    </div>
+  </div>
+  <!-- Add other posters (poster 2.png ... poster.png) with unique IDs -->
+</div>
+
+<!-- Bottom Contact Button -->
+<button id="contactButton" onclick="window.location.href='contact.html'">Contact Me</button>
+
+<footer>© 2026 The Watchman’s Pen</footer>
+
+<div id="lightbox" onclick="closeLightbox()"><img id="lightbox-img"></div>
+
+<audio id="pop-sound" src="pop.mp3" preload="auto"></audio>
+
+<script>
+// Tab Switching
+function switchTab(tab,btn){
+  document.getElementById('logos').style.display = tab==='logos'?'grid':'none';
+  document.getElementById('posters').style.display = tab==='posters'?'grid':'none';
+  document.querySelectorAll('.tab-container button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// Lightbox
+function openLightbox(img){
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox').classList.add('show');
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('show'); }
+
+// Likes/Dislikes
+const products = ['logo2','poster1']; // add all unique IDs for logos/posters
+products.forEach(id=>{
+  const likeBtn = document.getElementById('like-'+id);
+  const dislikeBtn = document.getElementById('dislike-'+id);
+  if(likeBtn && localStorage.getItem('likes-'+id)) likeBtn.querySelector('span').innerText = localStorage.getItem('likes-'+id);
+  if(dislikeBtn && localStorage.getItem('dislikes-'+id)) dislikeBtn.querySelector('span').innerText = localStorage.getItem('dislikes-'+id);
+  if(localStorage.getItem('vote-'+id)==='like') likeBtn.classList.add('active');
+  if(localStorage.getItem('vote-'+id)==='dislike') dislikeBtn.classList.add('active');
+  if(localStorage.getItem('comments-'+id)) document.getElementById('comments-'+id).innerHTML = localStorage.getItem('comments-'+id);
+});
+
+function vote(id,type){
+  const pop = document.getElementById('pop-sound');
+  const likeBtn = document.getElementById('like-'+id);
+  const dislikeBtn = document.getElementById('dislike-'+id);
+  if(!likeBtn || !dislikeBtn) return;
+  let likes = parseInt(likeBtn.querySelector('span').innerText);
+  let dislikes = parseInt(dislikeBtn.querySelector('span').innerText);
+  const current = localStorage.getItem('vote-'+id);
+  let changed = false;
+
+  if(current===type){
+    if(type==='like'){likes--; likeBtn.classList.remove('active'); changed=true;}
+    if(type==='dislike'){dislikes--; dislikeBtn.classList.remove('active'); changed=true;}
+    localStorage.removeItem('vote-'+id);
+  } else {
+    if(current==='like'){likes--; likeBtn.classList.remove('active'); changed=true;}
+    if(current==='dislike'){dislikes--; dislikeBtn.classList.remove('active'); changed=true;}
+    if(type==='like'){likes++; likeBtn.classList.add('active'); changed=true;}
+    if(type==='dislike'){dislikes++; dislikeBtn.classList.add('active'); changed=true;}
+    localStorage.setItem('vote-'+id,type);
+  }
+  if(changed) pop.play();
+  likeBtn.querySelector('span').innerText = likes;
+  dislikeBtn.querySelector('span').innerText = dislikes;
+  localStorage.setItem('likes-'+id,likes);
+  localStorage.setItem('dislikes-'+id,dislikes);
+}
+
+// Comments
+function toggleComments(id){
+  const c = document.getElementById('comments-'+id);
+  if(c) c.style.display = c.style.display==='block'?'none':'block';
+}
+function addComment(id){
+  const input = document.getElementById('input-'+id);
+  if(!input || input.value.trim()==='') return;
+  const commentsDiv = document.getElementById('comments-'+id);
+  const p = document.createElement('p'); p.innerText = 'Visitor: '+input.value;
+  commentsDiv.appendChild(p);
+  localStorage.setItem('comments-'+id,commentsDiv.innerHTML);
+  input.value='';
+}
+</script>
+
+</body>
+  </html>
