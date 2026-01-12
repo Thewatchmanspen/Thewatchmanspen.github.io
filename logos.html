@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Logos | The Watchman’s Pen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: #0b0b0b;
+    color: #ffffff;
+  }
+
+  .top-bar {
+    height: 60px;
+    background-color: #111111;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+  }
+
+  .top-bar a {
+    color: #ffffff;
+    text-decoration: none;
+    margin-right: 15px;
+    font-size: 1.4rem;
+  }
+
+  .content {
+    padding: 80px 15px 40px;
+    max-width: 420px;
+    margin: auto;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .item {
+    background-color: #111111;
+    border-radius: 14px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  }
+
+  .item img {
+    width: 100%;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .price {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-top: 10px;
+    color: #ffffff;
+    text-shadow:
+       1px 1px 0 #222,
+      -1px -1px 0 #444,
+       1px -1px 0 #444,
+      -1px 1px 0 #444,
+       0 0 6px #999;
+  }
+
+  .likes {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 8px;
+  }
+
+  .likes button {
+    background-color: #ffffff;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+  }
+
+  .likes button:hover {
+    transform: translateY(-2px);
+  }
+
+  .comments {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    line-height: 1.4rem;
+  }
+
+  .comments p {
+    margin: 4px 0;
+  }
+
+  .comment-input {
+    display: flex;
+    margin-top: 6px;
+    gap: 5px;
+  }
+
+  .comment-input input {
+    flex: 1;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+  }
+
+  .comment-input button {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: none;
+    background-color: #ffffff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    margin-top: 30px;
+  }
+
+  /* Lightbox */
+  #lightbox {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+  }
+
+  #lightbox img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+  }
+
+  #lightbox.show {
+    display: flex;
+  }
+
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <a href="products.html">←</a>
+  Logos
+</div>
+
+<div class="content">
+  <h1>Logo Designs</h1>
+
+  <div class="gallery">
+
+    <!-- Logo 1 -->
+    <div class="item" data-id="logo1">
+      <img src="portfolio 2.jpg" onclick="openLightbox(this)">
+      <div class="price">N$ 120.00</div>
+      <div class="likes">
+        <button onclick="like('logo1')">👍 <span id="like-logo1">1023</span></button>
+        <button onclick="dislike('logo1')">👎 <span id="dislike-logo1">14</span></button>
+      </div>
+      <div class="comments" id="comments-logo1">
+        <p>JohnDoe: Amazing design!</p>
+        <p>SarahL: Exactly what I needed.</p>
+        <p>MikeR: Very professional work!</p>
+      </div>
+      <div class="comment-input">
+        <input type="text" placeholder="Add a comment" id="input-logo1">
+        <button onclick="addComment('logo1')">Send</button>
+      </div>
+    </div>
+
+    <!-- Logo 2 -->
+    <div class="item" data-id="logo2">
+      <img src="portfolio 3.jpg" onclick="openLightbox(this)">
+      <div class="price">N$ 120.00</div>
+      <div class="likes">
+        <button onclick="like('logo2')">👍 <span id="like-logo2">1145</span></button>
+        <button onclick="dislike('logo2')">👎 <span id="dislike-logo2">7</span></button>
+      </div>
+      <div class="comments" id="comments-logo2">
+        <p>AliceW: Stunning colors!</p>
+        <p>KevinP: Looks great on my website.</p>
+      </div>
+      <div class="comment-input">
+        <input type="text" placeholder="Add a comment" id="input-logo2">
+        <button onclick="addComment('logo2')">Send</button>
+      </div>
+    </div>
+
+    <!-- Additional logos can be duplicated in the same format -->
+    
+  </div>
+
+  <footer>
+    © 2026 The Watchman’s Pen
+  </footer>
+</div>
+
+<div id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img">
+</div>
+
+<script>
+  // Lightbox
+  function openLightbox(img) {
+    document.getElementById('lightbox-img').src = img.src;
+    document.getElementById('lightbox').classList.add('show');
+  }
+  function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('show');
+  }
+
+  // Load likes/dislikes from localStorage
+  const logos = ['logo1','logo2']; // add more IDs if needed
+  logos.forEach(id => {
+    if(localStorage.getItem('likes-'+id)) {
+      document.getElementById('like-'+id).innerText = localStorage.getItem('likes-'+id);
+    }
+    if(localStorage.getItem('dislikes-'+id)) {
+      document.getElementById('dislike-'+id).innerText = localStorage.getItem('dislikes-'+id);
+    }
+    if(localStorage.getItem('comments-'+id)) {
+      document.getElementById('comments-'+id).innerHTML = localStorage.getItem('comments-'+id);
+    }
+  });
+
+  function like(id){
+    let count = parseInt(document.getElementById('like-'+id).innerText);
+    count++;
+    document.getElementById('like-'+id).innerText = count;
+    localStorage.setItem('likes-'+id, count);
+  }
+
+  function dislike(id){
+    let count = parseInt(document.getElementById('dislike-'+id).innerText);
+    count++;
+    document.getElementById('dislike-'+id).innerText = count;
+    localStorage.setItem('dislikes-'+id, count);
+  }
+
+  function addComment(id){
+    let input = document.getElementById('input-'+id);
+    if(input.value.trim() === '') return;
+    let commentsDiv = document.getElementById('comments-'+id);
+    let newComment = document.createElement('p');
+    newComment.innerText = 'Visitor: ' + input.value;
+    commentsDiv.appendChild(newComment);
+    localStorage.setItem('comments-'+id, commentsDiv.innerHTML);
+    input.value = '';
+  }
+</script>
+
+</body>
+  </html>
