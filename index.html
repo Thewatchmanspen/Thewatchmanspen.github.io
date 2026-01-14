@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Watchman’s Pen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  :root {
+    --bg: #0b0b0b;
+    --panel: #111111;
+    --white: #ffffff;
+    --muted: rgba(255,255,255,0.7);
+    --radius: 14px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background-color: var(--bg);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* === Background Video === */
+  .bg-video {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.1;
+    filter: blur(8px);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  /* === Top Bar === */
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 60px;
+    width: 100%;
+    background: rgba(17,17,17,0.9);
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+  }
+
+  /* === Main Content === */
+  .content {
+    padding-top: 90px;
+    max-width: 420px;
+    margin: auto;
+    text-align: center;
+  }
+
+  .title-img {
+    width: 100%;
+    max-width: 320px;
+    margin: 30px auto 20px;
+    display: block;
+  }
+
+  .tagline {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 30px;
+  }
+
+  /* === Navigation Buttons === */
+  .button-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 15px;
+    background: var(--white);
+    color: #000;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(255,255,255,0.15);
+  }
+
+  /* === Contact Button === */
+  .contact-btn {
+    display: block;
+    width: 100%;
+    padding: 17px;
+    background: var(--white);
+    color: #000;
+    border-radius: calc(var(--radius) + 2px);
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 25px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .contact-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(255,255,255,0.2);
+  }
+
+  /* === Visitor Counter === */
+  .visitors {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  footer {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Background Video -->
+<video class="bg-video" autoplay muted loop playsinline>
+  <source src="background.mp4" type="video/mp4">
+</video>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  The Watchman’s Pen
+</div>
+
+<!-- Main Content -->
+<div class="content">
+
+  <!-- Logo -->
+  <img src="Title.png" alt="The Watchman’s Pen" class="title-img">
+
+  <!-- Optional Tagline -->
+  <div class="tagline">
+    Creative design • Logos • Posters • Visual identity
+  </div>
+
+  <!-- Navigation -->
+  <div class="button-row">
+    <a href="about.html" class="btn">About</a>
+    <a href="products.html" class="btn">Products</a>
+  </div>
+
+  <!-- Contact -->
+  <a href="contact.html" class="contact-btn">
+    Contact Me
+  </a>
+
+  <!-- Visitors -->
+  <div class="visitors">
+    Visitors: <span id="count">150</span>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    © 2026 The Watchman’s Pen
+  </footer>
+
+</div>
+
+<script>
+  let baseCount = 150;
+  let count = localStorage.getItem("visitorCount");
+
+  if (!count) {
+    count = baseCount;
+  } else {
+    count = parseInt(count) + 1;
+  }
+
+  localStorage.setItem("visitorCount", count);
+  document.getElementById("count").innerText = count;
+</script>
+
+</body>
+  </html>
