@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Watchman’s Pen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  :root {
+    --dark: #0b0b0b;
+    --panel: rgba(17,17,17,0.85);
+    --white: #ffffff;
+    --muted: rgba(255,255,255,0.75);
+    --radius: 14px;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--dark);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== BACKGROUND VIDEO ===== */
+  .video-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.18;
+    filter: blur(6px) brightness(0.7);
+    z-index: -2;
+  }
+
+  .video-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: -1;
+  }
+
+  /* ===== TOP BAR ===== */
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 60px;
+    width: 100%;
+    background: var(--panel);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    z-index: 1000;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.6);
+  }
+
+  /* ===== MAIN CONTENT ===== */
+  .content {
+    padding-top: 90px;
+    max-width: 420px;
+    margin: auto;
+    text-align: center;
+    animation: pageEnter 0.8s ease;
+  }
+
+  @keyframes pageEnter {
+    from {
+      opacity: 0;
+      transform: translateY(25px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .title-img {
+    width: 100%;
+    max-width: 320px;
+    margin: 30px auto 15px;
+    display: block;
+  }
+
+  .tagline {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 35px;
+  }
+
+  /* ===== NAV BUTTONS ===== */
+  .button-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 15px;
+    background: var(--white);
+    color: #000;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .btn:active {
+    transform: scale(0.94);
+  }
+
+  .btn:hover {
+    box-shadow: 0 8px 20px rgba(255,255,255,0.15);
+  }
+
+  /* ===== CONTACT BUTTON ===== */
+  .contact-btn {
+    display: block;
+    width: 100%;
+    padding: 17px;
+    background: var(--white);
+    color: #000;
+    border-radius: 16px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-bottom: 25px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .contact-btn:active {
+    transform: scale(0.95);
+  }
+
+  .contact-btn:hover {
+    box-shadow: 0 10px 25px rgba(255,255,255,0.2);
+  }
+
+  /* ===== VISITORS ===== */
+  .visitors {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+
+  footer {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 20px;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- Background Video -->
+<video class="video-bg" autoplay muted loop playsinline>
+  <source src="bg.mp4" type="video/mp4">
+</video>
+<div class="video-overlay"></div>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  The Watchman’s Pen
+</div>
+
+<!-- Content -->
+<div class="content">
+
+  <img src="Title.png" alt="The Watchman’s Pen" class="title-img">
+
+  <div class="tagline">
+    Logos • Posters • Animation • Visual Storytelling
+  </div>
+
+  <div class="button-row">
+    <a href="about.html" class="btn">About</a>
+    <a href="products.html" class="btn">Products</a>
+  </div>
+
+  <a href="contact.html" class="contact-btn">
+    Contact Me
+  </a>
+
+  <div class="visitors">
+    Visitors: <span id="count">150</span>
+  </div>
+
+  <footer>
+    © 2026 The Watchman’s Pen
+  </footer>
+
+</div>
+
+<script>
+  let baseCount = 150;
+  let count = localStorage.getItem("visitorCount");
+
+  if (!count) {
+    count = baseCount;
+  } else {
+    count = parseInt(count) + 1;
+  }
+
+  localStorage.setItem("visitorCount", count);
+  document.getElementById("count").innerText = count;
+</script>
+
+</body>
+  </html>
