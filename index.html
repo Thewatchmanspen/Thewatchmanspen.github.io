@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Watchman’s Pen | Creative Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;600;900&display=swap');
+
+  :root {
+    --dark: #050505;
+    --accent: #00f2ff; 
+    --gold: #ffd700;
+    --white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.03);
+    --glass-border: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; cursor: crosshair; }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--dark);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== ARTSY BACKGROUND ===== */
+  .video-bg {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.25;
+    z-index: -3;
+    filter: saturate(0) brightness(0.5);
+  }
+
+  /* Large Decorative Background Text */
+  .bg-text {
+    position: fixed;
+    font-family: 'Syncopate', sans-serif;
+    font-weight: 900;
+    font-size: 15vw;
+    color: rgba(255,255,255,0.02);
+    z-index: -2;
+    white-space: nowrap;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    text-transform: uppercase;
+  }
+
+  .video-overlay {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, transparent 0%, var(--dark) 90%);
+    z-index: -1;
+  }
+
+  /* ===== NAV BAR ===== */
+  .top-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 30px 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .brand-label {
+    font-family: 'Syncopate', sans-serif;
+    font-weight: 700;
+    letter-spacing: 5px;
+    font-size: 0.8rem;
+    color: var(--white);
+  }
+
+  .menu-toggle {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 1px;
+    background: var(--white);
+    transition: 0.3s;
+  }
+
+  .menu-toggle:hover span:nth-child(1) { transform: translateX(-10px); background: var(--accent); }
+
+  /* ===== HAMBURGER OVERLAY ===== */
+  .hamburger-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 5, 5, 0.98);
+    backdrop-filter: blur(40px);
+    z-index: 1500;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 10vw;
+    animation: slideIn 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .hamburger-overlay.active { display: flex; }
+
+  .social-link {
+    font-family: 'Syncopate', sans-serif;
+    font-size: 4vw;
+    font-weight: 700;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+    text-decoration: none;
+    margin: 10px 0;
+    transition: 0.4s;
+  }
+
+  .social-link:hover {
+    color: var(--white);
+    -webkit-text-stroke: 1px var(--white);
+    padding-left: 20px;
+  }
+
+  /* ===== HERO SECTION ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 20px;
+    position: relative;
+  }
+
+  .title-img {
+    width: 80%;
+    max-width: 600px;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 20px 50px rgba(0,0,0,1));
+    z-index: 2;
+  }
+
+  .tagline {
+    font-size: 0.9rem;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    font-family: 'Syncopate', sans-serif;
+    color: var(--accent);
+    margin-bottom: 60px;
+    opacity: 0.8;
+  }
+
+  /* ===== STUDIO INTERFACE (Form & Nav) ===== */
+  .studio-card {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    padding: 40px;
+    border-radius: 2px; /* Brutalist sharp edges */
+    width: 100%;
+    max-width: 450px;
+    text-align: left;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+  }
+
+  .nav-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--glass-border);
+    margin-bottom: 30px;
+  }
+
+  .btn {
+    background: var(--dark);
+    padding: 20px;
+    text-decoration: none;
+    color: var(--white);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-align: center;
+    transition: 0.3s;
+  }
+
+  .btn:hover { background: var(--accent); color: var(--dark); }
+
+  /* ===== FORM DESIGN ===== */
+  .form-title {
+    font-family: 'Syncopate', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    color: rgba(255,255,255,0.5);
+  }
+
+  .contact-form input, .contact-form textarea {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 15px 0;
+    margin-bottom: 15px;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: 0.3s;
+  }
+
+  .contact-form input:focus, .contact-form textarea:focus {
+    border-bottom-color: var(--accent);
+  }
+
+  .send-btn {
+    width: 100%;
+    padding: 20px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Syncopate', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+  }
+
+  .send-btn:hover {
+    background: var(--accent);
+    color: var(--dark);
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+  }
+
+  /* ===== FOOTER ELEMENTS ===== */
+  .visitor-pill {
+    margin-top: 50px;
+    font-size: 0.6rem;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  footer {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    text-align: center;
+    font-size: 0.5rem;
+    letter-spacing: 5px;
+    opacity: 0.4;
+  }
+
+  @keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+
+  @media (max-width: 768px) {
+    .top-bar { padding: 20px; }
+    .social-link { font-size: 10vw; }
+    .studio-card { padding: 20px; }
+  }
+</style>
+</head>
+
+<body>
+
+<video class="video-bg" autoplay muted loop playsinline>
+  <source src="bg.mp4" type="video/mp4">
+</video>
+
+<div class="bg-text">CREATIVE</div>
+<div class="video-overlay"></div>
+
+<header class="top-bar">
+  <div class="brand-label">WATCHMAN’S PEN</div>
+  <div class="menu-toggle" onclick="toggleMenu()">
+    <span></span>
+    <span></span>
+  </div>
+</header>
+
+<div class="hamburger-overlay" id="menuOverlay">
+  <a href="https://tiktok.com/@the.watchman.pen" class="social-link" target="_blank">TIKTOK</a>
+  <a href="https://www.instagram.com/the_watchmans_pen_?igsh=a3c2d3RvZmZ1ZHBx" class="social-link" target="_blank">INSTAGRAM</a>
+  <a href="https://www.youtube.com/Joshua Denzil" class="social-link" target="_blank">YOUTUBE</a>
+  <div onclick="toggleMenu()" style="margin-top: 40px; cursor: pointer; font-size: 0.7rem; letter-spacing: 5px;">[ CLOSE ]</div>
+</div>
+
+<main class="hero">
+  <img src="Title.png" alt="Logo" class="title-img">
+  
+  <div class="tagline">Visual Storytelling • Digital Alchemy</div>
+
+  <div class="studio-card">
+    <div class="nav-grid">
+      <a href="about.html" class="btn">About</a>
+      <a href="products.html" class="btn">Studio Products</a>
+    </div>
+
+    <div class="contact-form">
+      <div class="form-title">INQUIRY_FORM.V1</div>
+      <input type="text" id="userName" placeholder="NAME / BRAND">
+      <textarea id="userMsg" placeholder="PROJECT DETAILS..."></textarea>
+      <button class="send-btn" onclick="sendToWhatsApp()">INITIATE MESSAGE</button>
+    </div>
+  </div>
+
+  <div class="visitor-pill">
+    EST. 2026 // NODE_COUNT: <span id="count">150</span>
+  </div>
+</main>
+
+<footer>
+  © 2026 THE WATCHMAN’S PEN // ALL RIGHTS RESERVED
+</footer>
+
+<script>
+  // VISITOR COUNTER
+  let count = localStorage.getItem("visitorCount") || 150;
+  count = parseInt(count) + 1;
+  localStorage.setItem("visitorCount", count);
+  document.getElementById("count").innerText = count;
+
+  // MENU LOGIC
+  function toggleMenu() {
+    document.getElementById('menuOverlay').classList.toggle('active');
+  }
+
+  // WHATSAPP LOGIC
+  function sendToWhatsApp() {
+    const name = document.getElementById('userName').value;
+    const msg = document.getElementById('userMsg').value;
+    const phone = "264814308121"; 
+    
+    if(!name || !msg) {
+      alert("PLEASE COMPLETE THE INQUIRY FORM.");
+      return;
+    }
+
+    const encodedMsg = encodeURIComponent(`Inquiry from ${name}: ${msg}`);
+    window.open(`https://wa.me/${phone}?text=${encodedMsg}`, '_blank');
+  }
+</script>
+
+</body>
+</html>
