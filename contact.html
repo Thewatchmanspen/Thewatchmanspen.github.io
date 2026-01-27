@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Contact | The Watchman’s Pen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  /* --- 1. BACKGROUND VIDEO & OVERLAY --- */
+  #bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+    filter: brightness(0.3) saturate(1.2);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,215,0,0.05), transparent 70%),
+                linear-gradient(to bottom, rgba(0,0,0,0.4), #000);
+    z-index: -1;
+  }
+
+  /* --- 2. BASE STYLES --- */
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+    color: #ffffff;
+    overflow: hidden;
+  }
+
+  /* --- 3. GLASS CARD --- */
+  .container {
+    max-width: 450px;
+    width: 90%;
+    padding: 50px 30px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.06); /* Translucent glass */
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+    animation: slideUp 0.8s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- 4. DECORATIVE ELEMENTS --- */
+  h1 {
+    color: #FFD700;
+    font-size: 2.8rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+  }
+
+  .info-box {
+    margin: 25px 0;
+    transition: 0.3s;
+    padding: 10px;
+    border-radius: 12px;
+  }
+
+  .info-box:hover {
+    background: rgba(255, 215, 0, 0.05);
+  }
+
+  p {
+    font-size: 1.2rem;
+    margin: 5px 0;
+    font-weight: 300;
+  }
+
+  .icon {
+    display: block;
+    font-size: 1.8rem;
+    margin-bottom: 8px;
+    color: #FFD700;
+  }
+
+  a.email {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(255,215,0,0.5);
+    transition: 0.3s;
+  }
+
+  a.email:hover {
+    color: #FFD700;
+    border-bottom-color: #FFD700;
+  }
+
+  /* --- 5. BUTTON --- */
+  a.cta {
+    display: inline-block;
+    padding: 14px 40px;
+    font-size: 1rem;
+    text-decoration: none;
+    color: #000;
+    background: linear-gradient(135deg, #FFD700, #FFEC8B);
+    border-radius: 50px;
+    font-weight: bold;
+    margin-top: 40px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.2);
+    transition: 0.4s;
+  }
+
+  a.cta:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4);
+  }
+
+  footer {
+    margin-top: 40px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.4);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+  }
+
+</style>
+</head>
+<body>
+
+  <video id="bg-video" src="animate.mp4" autoplay muted loop playsinline></video>
+
+  <div class="container">
+    <h1>Connect</h1>
+    <div class="subtitle">THE WATCHMAN’S PEN</div>
+
+    <div class="info-box">
+      <span class="icon">📞</span>
+      <p>0814308121</p>
+    </div>
+
+    <div class="info-box">
+      <span class="icon">📧</span>
+      <p><a href="mailto:thewatchmanspen@gmail.com" class="email">thewatchmanspen@gmail.com</a></p>
+    </div>
+
+    <a href="index.html" class="cta">Back to Home</a>
+
+    <footer>&copy; 2026 The Watchman’s Pen. All rights reserved.</footer>
+  </div>
+
+</body>
+</html>
