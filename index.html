@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Watchman’s Pen | The Archives</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Playfair+Display:wght@900&display=swap" rel="stylesheet">
+
+<style>
+:root { --gold: #ffd700; --deep: #050505; --glass: rgba(255, 255, 255, 0.05); }
+body { margin:0; background: #000; color: #fff; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; }
+#bg-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10; filter: brightness(0.15); }
+
+/* NAVIGATION */
+.hamburger { position: fixed; top: 25px; right: 25px; font-size: 1.8rem; cursor: pointer; z-index: 10001; background: var(--glass); padding: 12px; border-radius: 12px; backdrop-filter: blur(10px); color: var(--gold); border: 1px solid rgba(255,215,0,0.3); }
+.nav-menu { position: fixed; top: 0; right: -320px; height: 100%; width: 280px; background: rgba(0,0,0,0.98); backdrop-filter: blur(25px); z-index: 10000; transition: 0.5s; display: flex; flex-direction: column; padding-top: 80px; }
+.nav-menu.open { right: 0; }
+.nav-menu a { color: white; text-decoration: none; padding: 18px 30px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.nav-menu a i { margin-right: 15px; color: var(--gold); width: 20px; text-align: center; }
+.nav-label { font-size: 0.7rem; color: var(--gold); text-transform: uppercase; padding: 20px 30px 5px; opacity: 0.5; letter-spacing: 2px; }
+
+/* SECTIONS */
+.page-section { min-height: 100vh; display: none; padding: 100px 20px; box-sizing: border-box; animation: fadeIn 0.8s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* THE WATCHMAN'S HOUR GAME */
+.quiz-container { max-width: 500px; margin: 40px auto; background: var(--glass); padding: 40px; border-radius: 30px; border: 1px solid rgba(255,215,0,0.5); backdrop-filter: blur(15px); text-align: center; box-shadow: 0 0 30px rgba(255, 215, 0, 0.1); }
+.quiz-option { display: block; width: 100%; padding: 15px; margin: 10px 0; background: rgba(255,255,255,0.05); border: 1px solid #444; color: #fff; border-radius: 12px; cursor: pointer; text-align: left; transition: 0.3s; font-size: 0.95rem; }
+.quiz-option:hover { border-color: var(--gold); background: rgba(255,215,0,0.1); box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
+
+/* READER & TABS */
+.tab-btn { padding: 12px 25px; border-radius: 30px; border: 1px solid var(--gold); background: transparent; color: #fff; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.75rem; margin: 5px; }
+.tab-btn.active { background: var(--gold); color: #000; }
+.story-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1200px; margin: auto; }
+.story-card { background: var(--glass); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; cursor: pointer; transition: 0.4s; }
+.story-card:hover { border-color: var(--gold); }
+
+#reader-modal { display: none; position: fixed; inset: 0; background: var(--deep); z-index: 30000; overflow-y: auto; padding: 60px 20px; }
+.reader-inner { max-width: 800px; margin: auto; font-family: 'Crimson Pro', serif; font-size: 1.3rem; line-height: 1.8; color: #ddd; }
+.pub-btn { background: #25d366; color: #fff; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
+</style>
+</head>
+
+<body onload="navigateTo('home')">
+
+<video id="bg-video" src="animate.mp4" autoplay muted loop playsinline></video>
+
+<div class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></div>
+
+<nav class="nav-menu" id="nav-menu">
+  <div class="nav-label">Navigation</div>
+  <a href="#" onclick="navigateTo('home')"><i class="fas fa-home"></i> Home</a>
+  <a href="#" onclick="navigateTo('stories')"><i class="fas fa-book-open"></i> Archives</a>
+  <a href="#" onclick="navigateTo('quiz')"><i class="fas fa-clock"></i> The Watchman's Hour</a>
+  
+  <div class="nav-label">Socials</div>
+  <a href="https://instagram.com/thewatchmanspen" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+  <a href="https://facebook.com/thewatchmanspen" target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+  <a href="https://wa.me/264814308121"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+</nav>
+
+<div id="home-page" class="page-section" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+  <h1 style="font-family:'Playfair Display'; font-size: clamp(3rem, 10vw, 6rem); color: var(--gold); margin:0;">THE WATCHMAN</h1>
+  <p style="letter-spacing: 10px; opacity: 0.7; text-transform: uppercase;">Impressing Beyond Repair</p>
+  <button class="tab-btn active" style="margin-top: 30px;" onclick="navigateTo('quiz')">Enter The Hour</button>
+</div>
+
+<div id="quiz-page" class="page-section">
+    <div class="quiz-container" id="quiz-box">
+        <h2 style="color:var(--gold); font-family:'Playfair Display'; letter-spacing: 2px;">THE WATCHMAN'S HOUR</h2>
+        <div id="game-content">
+            <p>The sands of time are shifting. To receive the vision, you must first survive the discernment.</p>
+            <button class="quiz-option" onclick="startTrial()"> <i class="fas fa-hourglass-start"></i> Begin the Discernment</button>
+        </div>
+    </div>
+</div>
+
+<div id="stories-page" class="page-section">
+  <div class="tab-container" id="story-tabs">
+    <button class="tab-btn active" onclick="filterStories('spiritual', this)">Spiritual</button>
+    <button class="tab-btn" onclick="filterStories('scary', this)">Scary</button>
+    <button class="tab-btn" onclick="filterStories('mystery', this)">Mystery</button>
+    <button class="tab-btn" onclick="filterStories('comedy', this)">Comedy</button>
+    <button class="tab-btn" onclick="filterStories('adventure', this)">Adventure</button>
+    <button class="tab-btn" onclick="filterStories('romance', this)">Romance</button>
+  </div>
+  <div class="story-grid" id="story-container"></div>
+</div>
+
+<div id="reader-modal">
+  <button onclick="closeReader()" style="position:fixed; top:20px; left:20px; background:var(--gold); border:none; padding:10px 20px; border-radius:50px; cursor:pointer; font-weight:bold; z-index:1001;">← EXIT</button>
+  <div class="reader-inner" id="reader-content"></div>
+</div>
+
+<script>
+let currentStep = 0;
+const trialSteps = [
+    { q: "In the dead of night, what guides your business?", options: ["The North Star (Clear Vision)", "The Campfire (Community Support)", "The Lightning (Spontaneous Risk)"] },
+    { q: "If your brand were a weapon, it would be...", options: ["A Silent Bow (Precision)", "A Heavy Shield (Trust)", "A Flaming Sword (Authority)"] }
+];
+
+function startTrial() {
+    currentStep = 0;
+    showQuestion();
+}
+
+function showQuestion() {
+    const box = document.getElementById('quiz-box');
+    const step = trialSteps[currentStep];
+    let html = `<h3 style="color:var(--gold)">${step.q}</h3>`;
+    step.options.forEach((opt, i) => {
+        html += `<button class="quiz-option" onclick="processStep(${i})">${opt}</button>`;
+    });
+    box.innerHTML = html;
+}
+
+function processStep(i) {
+    currentStep++;
+    if(currentStep < trialSteps.length) {
+        showQuestion();
+    } else {
+        const box = document.getElementById('quiz-box');
+        box.innerHTML = `<h2 style="color:var(--gold)">REVELATION</h2><p>The Hour has spoken. You carry the Spirit of <b>The Torchbearer</b>. You are meant to bring light to the dark corners of the market.</p><button class="tab-btn active" onclick="navigateTo('stories')">Enter Archives</button>`;
+    }
+}
+
+/* --- STORY ENGINE --- */
+const storyVault = {
+    spiritual: [{ title: "The Scribe of Zion", text: "Prophetic design is not about looking good; it is about standing firm. The Watchman drew a circle in the Namibian sand, and as the sun set, the circle turned into a gold ring that could only be seen by those with a pure heart. Your business is that circle." }],
+    scary: [{ title: "The Mirror in Katutura", text: "In a small barber shop in Katutura, there is a mirror that doesn't show your face. It shows who you were 100 years ago. If you look too long, you might swap places with the reflection." }],
+    mystery: [{ title: "The Silent Commission", text: "A client paid me for a logo with a box of old keys. None of them fit any doors in Windhoek. But at 3 AM, the keys started singing. Each key opens a different person's secrets." }],
+    comedy: [{ title: "The Kapana Prophecy", text: "I once met a man who could tell your future by the way you spice your meat. He looked at my Kapana and said, 'Eish, your brand needs more salt and a better font!'" }],
+    adventure: [{ title: "The Skeleton Coast Map", text: "We found a map drawn on a dried fish skin. It didn't lead to gold; it led to a Wi-Fi signal in the middle of nowhere that only works for designers." }],
+    romance: [{ title: "Pixels and Hearts", text: "He was a vector (sharp and clean). She was a raster (complex and soft). They were technically incompatible, but when they overlapped, they created a new color the world hadn't seen yet." }]
+};
+
+// Fill slots to 120
+const genres = ['spiritual', 'scary', 'mystery', 'comedy', 'adventure', 'romance'];
+genres.forEach(g => {
+    while(storyVault[g].length < 20) {
+        storyVault[g].push({ title: `${g.charAt(0).toUpperCase() + g.slice(1)} Archive #${storyVault[g].length + 1}`, text: "The Watchman is currently recording this extraordinary tale. The ink is drying, and the twist is being sharpened. Check back soon for the full revelation." });
+    }
+});
+
+function toggleNav() { document.getElementById('nav-menu').classList.toggle('open'); }
+function navigateTo(id) {
+  document.querySelectorAll('.page-section').forEach(s => s.style.display = 'none');
+  document.getElementById(id + '-page').style.display = (id==='home'?'flex':'block');
+  if(id==='stories') filterStories('spiritual', document.querySelector('#story-tabs .tab-btn'));
+  document.getElementById('nav-menu').classList.remove('open');
+  window.scrollTo(0,0);
+}
+
+function filterStories(cat, btn) {
+  const container = document.getElementById('story-container'); container.innerHTML = '';
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  storyVault[cat].forEach(s => {
+    const card = document.createElement('div'); card.className = 'story-card';
+    card.innerHTML = `<h3 style="color:var(--gold);margin:0;">${s.title}</h3><p style="font-size:0.8rem;opacity:0.6;margin-top:10px;">Open the Archive...</p>`;
+    card.onclick = () => {
+        document.getElementById('reader-content').innerHTML = `<h1>${s.title}</h1><p>${s.text}</p><div style="margin-top:40px; border-top:1px solid #333; padding-top:20px;"><h3>Leave a Comment</h3><textarea id="uComm" style="width:100%;background:#111;color:#fff;border:1px solid #333;padding:15px;border-radius:10px;" rows="4"></textarea><button class="pub-btn" onclick="sendToWatchman('${s.title}')"><i class="fab fa-whatsapp"></i> SEND TO WATCHMAN</button></div>`;
+        document.getElementById('reader-modal').style.display = 'block';
+    };
+    container.appendChild(card);
+  });
+}
+
+function sendToWatchman(title) {
+    const val = document.getElementById('uComm').value;
+    if(!val) return alert("Eish! Write something first.");
+    window.location.href = `https://wa.me/264814308121?text=${encodeURIComponent("Story: "+title+"\nComment: "+val)}`;
+}
+function closeReader() { document.getElementById('reader-modal').style.display = 'none'; }
+</script>
+</body>
+</html>
