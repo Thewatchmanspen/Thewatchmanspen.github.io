@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Watchman’s Pen</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* --- 1. BACKGROUND VIDEO & OVERLAY --- */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  filter: brightness(0.3) saturate(1.2);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(255,215,0,0.1), transparent 70%),
+              linear-gradient(to bottom, rgba(0,0,0,0.4), #000);
+  z-index: -1;
+}
+
+/* --- 2. BASE STYLES --- */
+body {
+  margin:0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color:#fff;
+  text-align:center;
+  overflow-x:hidden;
+  padding-bottom:100px;
+}
+
+/* --- 3. ANIMATIONS --- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes glowPulse {
+  0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.2); }
+  50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+  100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.2); }
+}
+
+/* --- 4. HOME PAGE SECTION --- */
+#home-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  animation: fadeInUp 1s ease-out;
+}
+
+.main-title {
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  margin-bottom: 5px;
+  text-shadow: 0 0 30px rgba(255,215,0,0.5);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.sub-title {
+  font-size: 1.2rem;
+  letter-spacing: 3px;
+  color: #ccc;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+}
+
+.cta-button {
+  padding: 18px 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #000;
+  background: linear-gradient(135deg, gold, #ffec8b);
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.4s;
+  animation: glowPulse 2s infinite;
+  text-transform: uppercase;
+}
+
+.cta-button:hover {
+  transform: scale(1.1);
+  letter-spacing: 2px;
+}
+
+/* --- 5. PRODUCT SECTION --- */
+#product-section {
+  display: none;
+  animation: fadeInUp 0.6s ease-out;
+  padding-top: 80px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  text-shadow: 0 0 20px rgba(255,215,0,0.25);
+  text-transform: uppercase;
+}
+
+/* --- 6. GLASS TABS & GALLERIES --- */
+.tab-container {
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:15px;
+  margin-bottom:40px;
+  padding: 0 10px;
+}
+
+.tab-container button {
+  padding:14px 35px;
+  font-size:1rem;
+  font-weight:bold;
+  border-radius:30px;
+  border:1px solid rgba(255,255,255,0.2);
+  background:rgba(255,255,255,0.1);
+  color:#fff;
+  cursor:pointer;
+  backdrop-filter: blur(10px);
+  transition:0.4s;
+}
+
+.tab-container button.active {
+  background: gold;
+  color: #000;
+  border-color: gold;
+}
+
+.gallery {
+  display:none; 
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap:25px;
+  max-width:1200px;
+  margin:auto;
+  padding: 0 20px;
+}
+
+.item {
+  background:rgba(255,255,255,0.05);
+  backdrop-filter: blur(15px);
+  border-radius:20px;
+  padding:15px;
+  border:1px solid rgba(255,255,255,0.1);
+  transition: 0.3s;
+}
+
+.item:hover { transform: translateY(-10px); border-color: gold; }
+
+.item img, .item video {
+  width:100%;
+  border-radius:15px;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+}
+
+.price {
+  font-size:1.3rem;
+  font-weight:bold;
+  color:gold;
+  margin-top:15px;
+}
+
+/* --- 7. NAV ELEMENTS --- */
+#homeButton, #backBtn {
+  position:fixed; top:20px; 
+  padding:10px 20px; border-radius:10px;
+  background:rgba(0,0,0,0.6); backdrop-filter: blur(10px);
+  color:white; border:1px solid rgba(255,255,255,0.2);
+  cursor:pointer; z-index:1000; font-weight:bold;
+}
+#homeButton { left: 20px; }
+#backBtn { right: 20px; display: none; }
+
+#contactButton {
+  position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+  padding:12px 30px; border-radius:30px;
+  background:rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+  color:white; border:1px solid rgba(255,255,255,0.2);
+  cursor:pointer; z-index:1000; transition: 0.3s;
+}
+#contactButton:hover { background: gold; color: #000; }
+
+#lightbox {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9);
+  z-index:10000; justify-content:center; align-items:center;
+}
+#lightbox img { max-width:90%; max-height:80vh; border-radius:10px; }
+#lightbox.show { display:flex; }
+
+footer { margin-top: 60px; color: #666; font-size: 0.8rem; }
+</style>
+</head>
+
+<body>
+
+<video id="bg-video" src="animate.mp4" autoplay muted loop playsinline></video>
+
+<button id="homeButton" onclick="showHome()">Home</button>
+<button id="backBtn" onclick="resetTabs()">Back</button>
+
+<div id="home-section">
+  <h1 class="main-title">The Watchman’s Pen</h1>
+  <p class="sub-title">Where Vision Meets Motion</p>
+  <button class="cta-button" onclick="showProducts()">View Designs</button>
+</div>
+
+<div id="product-section">
+  <h1>Our Products</h1>
+
+  <div class="tab-container" id="tabs">
+    <button onclick="animateTab('logos', this)">Logos</button>
+    <button onclick="animateTab('posters', this)">Posters</button>
+    <button onclick="animateTab('animations', this)">Logo Animations</button>
+  </div>
+
+  <div class="gallery" id="logos">
+    <div class="item"><img src="portfolio 2.jpg" onclick="openLightbox(this)"><div class="price">N$ 120.00</div></div>
+    <div class="item"><img src="portfolio 3.jpg" onclick="openLightbox(this)"><div class="price">N$ 120.00</div></div>
+    <div class="item"><img src="portfolio 4.jpg" onclick="openLightbox(this)"><div class="price">N$ 120.00</div></div>
+    <div class="item"><img src="portfolio 6.jpg" onclick="openLightbox(this)"><div class="price">N$ 120.00</div></div>
+    <div class="item"><img src="portfolio 7.jpg" onclick="openLightbox(this)"><div class="price">N$ 120.00</div></div>
+    <div class="item"><img src="portfolio 8.jpg" onclick="openLightbox(this)"><div class="price">N$ 120.00</div></div>
+  </div>
+
+  <div class="gallery" id="posters">
+    <div class="item"><img src="poster 1.png" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+    <div class="item"><img src="poster 2.png" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+    <div class="item"><img src="poster 3.png" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+    <div class="item"><img src="poster 4.png" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+    <div class="item"><img src="poster 5.jpg" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+    <div class="item"><img src="poster 6.jpg" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+    <div class="item"><img src="poster 7.jpg" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+    <div class="item"><img src="poster.png" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+    <div class="item"><img src="an.jpeg" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+    <div class="item"><img src="annn.jpeg" onclick="openLightbox(this)"><div class="price">N$ 100.00</div></div>
+  </div>
+
+  <div class="gallery" id="animations">
+    <div class="item"><video src="animate 1.mp4" controls loop></video><div class="price">N$ 150.00</div></div>
+    <div class="item"><video src="animate 2.mp4" controls loop></video><div class="price">N$ 150.00</div></div>
+    <div class="item"><video src="animate 3.mp4" controls loop></video><div class="price">N$ 150.00</div></div>
+    <div class="item"><video src="animate 4.mp4" controls loop></video><div class="price">N$ 150.00</div></div>
+    <div class="item"><video src="animate 5.mp4" controls loop></video><div class="price">N$ 150.00</div></div>
+    <div class="item"><video src="animate 6.mp4" controls loop></video><div class="price">N$ 150.00</div></div>
+  </div>
+</div>
+
+<button id="contactButton" onclick="window.location.href='contact.html'">Contact Me</button>
+
+<footer>© 2026 The Watchman’s Pen</footer>
+
+<div id="lightbox" onclick="this.classList.remove('show')"><img id="lightbox-img" src=""></div>
+
+<script>
+function showProducts() {
+  document.getElementById('home-section').style.display = 'none';
+  document.getElementById('product-section').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+function showHome() {
+  document.getElementById('home-section').style.display = 'flex';
+  document.getElementById('product-section').style.display = 'none';
+  resetTabs();
+}
+
+function animateTab(category, btn) {
+  const galleries = ['logos', 'posters', 'animations'];
+  galleries.forEach(id => {
+    const el = document.getElementById(id);
+    el.style.display = 'none';
+    if(id === 'animations') el.querySelectorAll('video').forEach(v => v.pause());
+  });
+
+  const tabs = document.getElementById('tabs').children;
+  for (let t of tabs) { t.classList.remove('active'); }
+  btn.classList.add('active');
+
+  const target = document.getElementById(category);
+  target.style.display = 'grid';
+  document.getElementById('backBtn').style.display = 'block';
+  window.scrollTo(0, 150);
+}
+
+function resetTabs() {
+  const galleries = ['logos', 'posters', 'animations'];
+  galleries.forEach(id => document.getElementById(id).style.display = 'none');
+  const tabs = document.getElementById('tabs').children;
+  for (let t of tabs) t.classList.remove('active');
+  document.getElementById('backBtn').style.display = 'none';
+}
+
+function openLightbox(img) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = img.src;
+  lb.classList.add('show');
+}
+</script>
+
+</body>
+</html>
