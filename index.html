@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Watchman’s Pen | Master Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:ital,wght@0,400;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+:root { --gold: #D4AF37; --void: #050505; --glass: rgba(255, 255, 255, 0.05); --text: #E0E0E0; }
+body { margin:0; background: var(--void); color: var(--text); font-family: 'Montserrat', sans-serif; overflow-x: hidden; scroll-behavior: smooth; }
+#bg-video { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10; filter: brightness(0.1); }
+
+/* NAVIGATION */
+.hamburger { position: fixed; top: 25px; right: 25px; font-size: 1.5rem; cursor: pointer; z-index: 10001; background: rgba(0,0,0,0.8); padding: 15px; border-radius: 50%; border: 1px solid var(--gold); color: var(--gold); }
+.nav-menu { position: fixed; top: 0; right: -100%; height: 100%; width: 100%; max-width: 350px; background: #000; border-left: 1px solid var(--gold); z-index: 10000; transition: 0.5s; display: flex; flex-direction: column; padding-top: 60px; overflow-y: auto; }
+.nav-menu.open { right: 0; }
+.nav-menu a { color: white; text-decoration: none; padding: 15px 40px; border-bottom: 1px solid rgba(255,215,0,0.05); font-family: 'Cinzel', serif; font-size: 0.9rem; }
+
+/* SECTIONS */
+.page-section { min-height: 100vh; display: none; padding: 100px 20px; animation: fadeIn 0.8s ease; box-sizing: border-box; }
+.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+
+/* HOME */
+#home-page { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+.main-title { font-family: 'Cinzel', serif; font-size: clamp(2.2rem, 7vw, 5rem); color: var(--gold); margin: 0; text-shadow: 0 0 20px rgba(212,175,55,0.2); }
+
+/* DESIGN GRID */
+.tab-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; flex-wrap: wrap; }
+.tab-btn { padding: 10px 20px; border: 1px solid #333; background: transparent; color: #888; cursor: pointer; font-family: 'Cinzel'; }
+.tab-btn.active-tab { border-color: var(--gold); color: var(--gold); background: rgba(212, 175, 55, 0.05); }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: auto; }
+.design-card { background: var(--glass); border: 1px solid #222; position: relative; height: 400px; overflow: hidden; border-radius: 4px; }
+.design-card img { width: 100%; height: 100%; object-fit: cover; }
+
+/* STORIES */
+.story-row { display: flex; padding: 20px; border-bottom: 1px solid #111; cursor: pointer; transition: 0.2s; align-items: center; }
+.story-row:hover { background: rgba(212, 175, 55, 0.05); border-left: 4px solid var(--gold); }
+.story-cat { color: var(--gold); font-size: 0.7rem; width: 100px; text-transform: uppercase; letter-spacing: 2px; }
+
+/* CINEMATIC READER */
+#reader-modal { display: none; position: fixed; inset: 0; background: #000; z-index: 30000; overflow-y: auto; }
+.reader-header-img { width: 100%; height: 60vh; object-fit: cover; filter: brightness(0.7); }
+.reader-wrap { max-width: 800px; margin: -120px auto 100px auto; background: var(--void); padding: 60px; position: relative; border: 1px solid rgba(212,175,55,0.3); border-radius: 2px; font-family: 'Playfair Display'; line-height: 2.2; font-size: 1.25rem; color: #ccc; box-shadow: 0 0 100px rgba(0,0,0,1); }
+.reader-wrap h1 { color: var(--gold); font-family: 'Cinzel'; font-size: 2.5rem; text-align: center; margin-top: 0; }
+
+/* FOOTER */
+footer { background: rgba(0,0,0,0.95); border-top: 1px solid var(--gold); padding: 80px 20px; margin-top: 150px; width: 100%; }
+.footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; max-width: 1200px; margin: auto; }
+.footer-col h3 { font-family: 'Cinzel'; color: var(--gold); margin-bottom: 20px; }
+.footer-bottom { text-align: center; margin-top: 50px; font-size: 0.7rem; color: #444; letter-spacing: 3px; }
+
+.wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; z-index: 10000; cursor: pointer; color: white; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+.cta-btn { padding: 18px 35px; border: 1px solid var(--gold); background: transparent; color: var(--gold); cursor: pointer; font-family: 'Cinzel'; letter-spacing: 3px; transition: 0.5s; }
+.cta-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 30px rgba(212,175,55,0.4); }
+</style>
+</head>
+
+<body onload="navigateTo('home')">
+
+<video id="bg-video" src="animate.mp4" autoplay muted loop playsinline></video>
+
+<div class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></div>
+
+<nav class="nav-menu" id="nav-menu">
+    <a href="#" onclick="navigateTo('home')">The Throne</a>
+    <a href="#" onclick="navigateTo('designs')">Designs</a>
+    <a href="#" onclick="navigateTo('stories')">Stories</a>
+    <a href="#" onclick="navigateTo('testimonials')">Prophetic Decrees</a>
+    <div style="padding: 40px; font-size: 0.8rem; color: #666; border-top: 1px solid #222; margin-top: auto;">
+        <h4 style="color:var(--gold); font-family:'Cinzel';">THE WATCHMAN’S HOURS</h4>
+        <p>Mon - Fri: 08:00 - 17:00</p>
+        <p>Sat: 09:00 - 13:00</p>
+        <div style="margin-top: 20px; display: flex; gap: 15px; font-size: 1.2rem;">
+            <i class="fab fa-instagram" style="color:var(--gold)"></i>
+            <i class="fab fa-facebook" style="color:var(--gold)"></i>
+        </div>
+    </div>
+</nav>
+
+<div id="home-page" class="page-section">
+    <h1 class="main-title">THE WATCHMAN’S PEN</h1>
+    <p style="letter-spacing: 12px; color: #666; margin-top: 20px; font-size: 0.75rem;">IMPRESSING BEYOND REPAIR</p>
+    <button class="cta-btn" style="margin-top: 60px;" onclick="navigateTo('designs')">ENTER THE ARMORY</button>
+    
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <h3>THE VISION</h3>
+                <p style="color:#888; line-height:1.8;">We don't just design; we define. Our pen is the bridge between the spiritual vision and the physical manifestation of excellence.</p>
+            </div>
+            <div class="footer-col">
+                <h3>CONTACT</h3>
+                <p style="color:#888;">Windhoek, Namibia<br>+264 81 430 8121<br>info@watchmanspen.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">© 2026 THE WATCHMAN’S PEN | CRAFTED IN NAMIBIA</div>
+    </footer>
+</div>
+
+<div id="designs-page" class="page-section">
+    <div class="section-header"><h2>Designs</h2></div>
+    <div class="tab-container">
+        <button class="tab-btn active-tab" onclick="filterDesign('logos', this)">Logos</button>
+        <button class="tab-btn" onclick="filterDesign('posters', this)">Posters</button>
+        <button class="tab-btn" onclick="filterDesign('animations', this)">Animations</button>
+    </div>
+    <div id="logos" class="gallery-grid design-cat">
+        <div class="design-card"><img src="portfolio 2.jpg"></div>
+        <div class="design-card"><img src="portfolio 3.jpg"></div>
+        <div class="design-card"><img src="portfolio 4.jpg"></div>
+        <div class="design-card"><img src="portfolio 6.jpg"></div>
+        <div class="design-card"><img src="portfolio 7.jpg"></div>
+        <div class="design-card"><img src="portfolio 8.jpg"></div>
+    </div>
+    <div id="posters" class="gallery-grid design-cat" style="display:none;">
+        <div class="design-card"><img src="poster 1.png"></div>
+        <div class="design-card"><img src="poster 2.png"></div>
+        <div class="design-card"><img src="poster 3.png"></div>
+        <div class="design-card"><img src="an.jpeg"></div>
+    </div>
+    <div id="animations" class="gallery-grid design-cat" style="display:none;">
+        <div class="design-card"><video src="animate.mp4" controls muted style="width:100%;height:100%;object-fit:cover;"></video></div>
+    </div>
+</div>
+
+<div id="stories-page" class="page-section">
+    <div class="section-header"><h2>Stories</h2><p>120 Scrolls of Revelation</p></div>
+    <div id="story-list-container" style="max-width: 900px; margin: auto; background: rgba(255,255,255,0.02); border: 1px solid #111;"></div>
+</div>
+
+<div id="reader-modal">
+    <button class="cta-btn" onclick="closeReader()" style="position:fixed; top:25px; left:25px; z-index:40000; background:rgba(0,0,0,0.8); padding: 10px 20px;">← EXIT</button>
+    <img id="reader-img" class="reader-header-img" src="">
+    <div class="reader-wrap" id="reader-content"></div>
+</div>
+
+<a href="https://wa.me/264814308121" class="wa-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+<script>
+function toggleNav() { document.getElementById('nav-menu').classList.toggle('open'); }
+function navigateTo(id) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById(id + '-page').classList.add('active');
+    if(document.getElementById('nav-menu').classList.contains('open')) toggleNav();
+    window.scrollTo(0,0);
+}
+function filterDesign(cat, btn) {
+    document.querySelectorAll('.design-cat').forEach(g => g.style.display = 'none');
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+    document.getElementById(cat).style.display = 'grid';
+    btn.classList.add('active-tab');
+}
+
+/* --- THE WATCHMAN'S 3D STORY ENGINE --- */
+const mainStories = [
+    { 
+        cat: "Spiritual", 
+        title: "The Scribe of the Seventh Gate", 
+        img: "https://images.unsplash.com/photo-1512418490979-92798ccc1380?q=80&w=2070&auto=format&fit=crop", 
+        text: "<h1>The Scribe of the Seventh Gate</h1><p>The wind in the Namib Desert does not just blow; it speaks. It carries the dust of ancient rivers and the whispers of those who walked before us...</p><p>The Watchman sat in his studio, the glow of his monitor the only light for miles. He wasn't just designing; he was wrestling with a vision. The stranger appeared with a briefcase that smelled of lightning...</p>" 
+    },
+    { 
+        cat: "Comedy", 
+        title: "The Taxi to Nowhere", 
+        img: "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=2070&auto=format&fit=crop", 
+        text: "<h1>The Taxi to Nowhere</h1><p>It was a Tuesday in Windhoek, the kind of day where the heat makes the tar roads look like soup. I waved down a taxi. A Corolla with a spoiler that looked like it belonged on a Boeing 747 pulled up...</p>" 
+    }
+];
+
+// Curated 3D Aesthetic Visuals for the 120 Slots
+const visualPool = [
+    "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1964&auto=format&fit=crop", // 3D Flowing Gold
+    "https://images.unsplash.com/photo-1614850523296-e8c041de24a6?q=80&w=2070&auto=format&fit=crop", // Dark Abstract 3D
+    "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop", // Geometric Depth
+    "https://images.unsplash.com/photo-1533134486753-c833f0ed4866?q=80&w=2070&auto=format&fit=crop", // Dark Cosmic
+    "https://images.unsplash.com/photo-1506318137071-a8e063b4bcd0?q=80&w=2070&auto=format&fit=crop"  // Deep Shadow Architecture
+];
+
+const titles = ["The Bleeding Pixel", "The Font of Life", "Vectorized Visions", "The 404 Prophecy", "Midnight Render", "The Transparent Soul", "Golden Kerning", "Beating of the CPU", "The Ghost Script", "Sinai Vectors"];
+
+const container = document.getElementById('story-list-container');
+for(let i=1; i<=120; i++) {
+    let s = mainStories[i-1] || { 
+        cat: ["Mystery", "Scary", "Adventure", "Romance"][i%4], 
+        title: titles[i % titles.length] + " #" + i, 
+        img: visualPool[i % visualPool.length],
+        text: "<h1>The Sealed Scroll</h1><p>The vision is locked behind the seventh seal. The ink is still forming in the spirit realm. Check back when the moon is high.</p>" 
+    };
+    
+    let row = document.createElement('div');
+    row.className = 'story-row';
+    row.innerHTML = `<div class="story-cat">${s.cat}</div><div style="flex-grow:1; font-family:'Playfair Display'; font-size:1.1rem;">${s.title}</div><i class="fas fa-feather-alt" style="color:var(--gold); opacity:0.5;"></i>`;
+    row.onclick = () => {
+        document.getElementById('reader-img').src = s.img;
+        document.getElementById('reader-content').innerHTML = s.text;
+        document.getElementById('reader-modal').style.display = 'block';
+    };
+    container.appendChild(row);
+}
+
+function closeReader() { document.getElementById('reader-modal').style.display = 'none'; }
+</script>
+</body>
+</html>
