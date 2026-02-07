@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Watchman’s Hour</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+
+<style>
+:root { --gold: #D4AF37; --void: #050505; --text: #E0E0E0; --glass-weak: rgba(255,255,255,0.03); --glass-strong: rgba(255,255,255,0.06); }
+body { margin:0; background: var(--void); color: var(--text); font-family: 'Montserrat', sans-serif; overflow: hidden; -webkit-font-smoothing:antialiased; }
+
+/* BACKDROP VIDEO */
+#bg-video-main { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -20; filter: brightness(0.12); }
+
+/* NAVIGATION (glassy) */
+.hamburger { position: fixed; top: 25px; right: 25px; font-size: 1.5rem; cursor: pointer; z-index: 10001; background: rgba(0,0,0,0.45); padding: 12px; border: 1px solid rgba(212,175,55,0.15); color: var(--gold); border-radius: 50%; backdrop-filter: blur(6px); box-shadow: 0 6px 18px rgba(0,0,0,0.6); }
+.nav-menu { position: fixed; top: 0; right: -100%; height: 100%; width: 100%; max-width: 360px; background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.45)); border-left: 1px solid rgba(212,175,55,0.08); z-index: 10000; transition: 0.45s; display: flex; flex-direction: column; padding-top: 120px; backdrop-filter: blur(10px); box-shadow: -10px 0 30px rgba(0,0,0,0.6); }
+.nav-menu.open { right: 0; }
+.nav-menu a { color: #fff; text-decoration: none; padding: 20px 34px; border-bottom: 1px solid rgba(212,175,55,0.06); font-family: 'Cinzel'; font-size: 0.95rem; letter-spacing: 2px; }
+
+/* PAGE SYSTEM (glassy content panel) */
+.page { position: absolute; inset: 0; width: 100%; height: 100vh; display: none; overflow-y: auto; padding: 100px 20px 60px; box-sizing: border-box; background: linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.55)); }
+.page.active { display: block; animation: pageFade 0.4s ease forwards; }
+@keyframes pageFade { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* HERO (center) */
+.section-title { text-align: center; font-family: 'Cinzel'; color: var(--gold); margin-bottom: 30px; font-size: 2.2rem; }
+
+/* DESIGNS SYSTEM */
+.design-tabs { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 15px; flex-wrap: wrap; }
+.tab-btn { background: transparent; border: none; color: #bbb; font-family: 'Cinzel'; cursor: pointer; padding: 10px 16px; letter-spacing: 2px; transition: 0.2s; }
+.tab-btn.active-tab { color: var(--gold); border-bottom: 2px solid var(--gold); }
+.design-grid { display: none; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; max-width: 1400px; margin: auto; padding-top: 10px; }
+.design-grid.active-section { display: grid; }
+
+/* GLASSY CARDS */
+.design-card {
+    position: relative;
+    height: 380px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    backdrop-filter: blur(8px) saturate(120%);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+}
+.design-card:hover { transform: translateY(-6px); border-color: rgba(212,175,55,0.25); box-shadow: 0 14px 40px rgba(0,0,0,0.65); }
+.design-card img, .design-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* TIMESTAMP pill (glassy) */
+.timestamp { position: absolute; bottom: 10px; right: 10px; background: rgba(0,0,0,0.45); color: var(--gold); font-size: 0.65rem; padding: 6px 10px; font-family: 'Cinzel'; border-radius: 20px; border: 0.5px solid rgba(212,175,55,0.08); letter-spacing: 1px; backdrop-filter: blur(6px); }
+
+/* STORIES LIST & CARDS (glassy) */
+#story-container { max-width: 820px; margin: auto; display: grid; grid-template-columns: 1fr; gap: 18px; padding-top: 10px; }
+.story-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 28px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.55);
+}
+.story-card:hover { transform: translateY(-6px); border-color: rgba(212,175,55,0.18); box-shadow: 0 14px 40px rgba(0,0,0,0.65); }
+.story-card h3 { margin: 0 0 6px 0; font-family: 'Cinzel'; color: var(--gold); letter-spacing: 1px; }
+.story-card p.meta { margin: 0; color: #a9a9a9; font-size: 0.82rem; letter-spacing: 1px; }
+
+/* READER (glassy modal) */
+#reader {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(3,3,3,0.65), rgba(3,3,3,0.75));
+    z-index: 20000;
+    overflow-y: auto;
+    padding: 80px 24px;
+    backdrop-filter: blur(6px);
+}
+.reader-content {
+    max-width: 900px;
+    margin: auto;
+    font-family: 'Calibri', sans-serif;
+    line-height: 1.7;
+    font-size: 1.18rem;
+    color: #e6e6e6;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border: 1px solid rgba(255,255,255,0.04);
+    padding: 38px;
+    border-radius: 10px;
+    box-shadow: 0 18px 60px rgba(0,0,0,0.7);
+}
+
+/* CONTACT BOX (glassy tweak) */
+.contact-box { text-align: center; max-width: 500px; margin: auto; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding: 40px; border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; backdrop-filter: blur(6px); box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+
+/* WA FLOAT */
+.wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; z-index: 10001; text-decoration: none; box-shadow: 0 8px 25px rgba(0,0,0,0.6); }
+
+/* small screens tweak */
+@media (max-width: 700px) {
+  .reader-content { font-size: 1rem; padding: 26px; }
+  .design-grid { gap: 14px; }
+  .design-card { height: 260px; }
+}
+</style>
+</head>
+<body>
+
+<video id="bg-video-main" src="animate 5.mp4" autoplay muted loop playsinline></video>
+
+<div class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></div>
+
+<nav class="nav-menu" id="nav-menu">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('designs')">Designs</a>
+    <a href="#" onclick="showPage('stories')">Stories</a>
+    <a href="#" onclick="showPage('game-page')">The Watchman’s Hour (Game)</a>
+    <a href="#" onclick="showPage('contact')">Contact</a>
+</nav>
+
+<div id="home" class="page active" style="display:flex; flex-direction:column; align-items:center; padding-top:25vh;">
+    <h1 style="font-family:'Cinzel'; font-size:clamp(2rem,9vw,5.5rem); color:var(--gold); margin:0; text-align:center;">THE WATCHMAN’S PEN</h1>
+    <p style="letter-spacing:12px; color:#bfbfbf; font-size:0.85rem; margin-top:15px; text-align:center;">IMPRESSING BEYOND REPAIR</p>
+    <button onclick="showPage('designs')" style="margin-top:50px; padding:18px 40px; border:1px solid var(--gold); background:transparent; color:var(--gold); font-family:'Cinzel'; cursor:pointer; letter-spacing:3px; font-weight:bold;">VIEW DESIGNS</button>
+</div>
+
+<div id="designs" class="page">
+    <h1 class="section-title">Designs</h1>
+    <div class="design-tabs">
+        <button class="tab-btn active-tab" onclick="filterDesigns('animations', this)">Logo Animation</button>
+        <button class="tab-btn" onclick="filterDesigns('posters', this)">Posters</button>
+        <button class="tab-btn" onclick="filterDesigns('logos', this)">Logos</button>
+    </div>
+
+    <div id="animations" class="design-grid active-section">
+        <div class="design-card"><video src="animate 1.mp4" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video><div class="timestamp">2 WEEKS AGO</div></div>
+        <div class="design-card"><video src="animate 2.mp4" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video><div class="timestamp">2 WEEKS AGO</div></div>
+        <div class="design-card"><video src="animate 3.mp4" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video><div class="timestamp">2 WEEKS AGO</div></div>
+        <div class="design-card"><video src="animate 4.mp4" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video><div class="timestamp">2 WEEKS AGO</div></div>
+        <div class="design-card"><video src="animate 5.mp4" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video><div class="timestamp">2 WEEKS AGO</div></div>
+        <div class="design-card"><video src="animate 6.mp4" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video><div class="timestamp">2 WEEKS AGO</div></div>
+        <div class="design-card"><video src="animate.mp4" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video><div class="timestamp">2 WEEKS AGO</div></div>
+    </div>
+
+    <div id="posters" class="design-grid">
+        <div class="design-card"><img src="poster 1.png"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="poster 2.png"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="poster 3.png"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="poster 4.png"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="poster 5.jpg"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="poster 6.jpg"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="poster 7.jpg"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="poster.png"><div class="timestamp">LAST MONTH</div></div>
+    </div>
+
+    <div id="logos" class="design-grid">
+        <div class="design-card"><img src="portfolio 2.jpg"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="portfolio 3.jpg"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="portfolio 4.jpg"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="portfolio 6.jpg"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="portfolio 7.jpg"><div class="timestamp">LAST MONTH</div></div>
+        <div class="design-card"><img src="portfolio 8.jpg"><div class="timestamp">LAST MONTH</div></div>
+    </div>
+</div>
+
+<div id="stories" class="page">
+    <h1 class="section-title">Master Scrolls</h1>
+    <div id="story-container"></div>
+</div>
+
+<div id="game-page" class="page">
+    <h1 class="section-title">The Watchman’s Hour</h1>
+    <div class="contact-box"><p>Trial Loading...</p>
+    <button onclick="showPage('contact')" style="color:var(--gold); background:none; border:1px solid var(--gold); padding:10px 20px; font-family:'Cinzel'; cursor:pointer;">SKIP TO CONTACT</button></div>
+</div>
+
+<div id="contact" class="page">
+    <h1 class="section-title">The Direct Line</h1>
+    <div class="contact-box">
+        <p style="font-family:'Cinzel'; color:var(--gold);">WHATSAPP / CALL</p>
+        <h2>+264 81 430 8121</h2>
+        <div class="social-links">
+            <a href="https://www.instagram.com/the_watchmans_pen_?igsh=a3c2d3RvZmZ1ZHBx" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://tiktok.com/@the.watchmans.pen" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.youtube.com/@joshuadenzil" target="_blank"><i class="fab fa-youtube"></i></a>
+        </div>
+    </div>
+</div>
+
+<div id="reader">
+    <button onclick="closeReader()" style="position:fixed; top:40px; left:40px; background:none; border:1px solid var(--gold); color:var(--gold); padding:10px 20px; cursor:pointer; font-family:'Cinzel';">← CLOSE</button>
+    <div id="reader-inner" class="reader-content"></div>
+</div>
+
+<a href="https://wa.me/264814308121" class="wa-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+<script>
+function toggleNav() { document.getElementById('nav-menu').classList.toggle('open'); }
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('reader').style.display = 'none';
+    if(document.getElementById('nav-menu').classList.contains('open')) toggleNav();
+    window.scrollTo(0,0);
+}
+function filterDesigns(sectionId, btn) {
+    document.querySelectorAll('.design-grid').forEach(sec => sec.classList.remove('active-section'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+    document.getElementById(sectionId).classList.add('active-section');
+    btn.classList.add('active-tab');
+}
+
+/* REPLACED STORIES - LONGER, GROUNDED, HUMOROUS + EMOTIONAL (CALIBRI in reader) */
+const stories = [
+  {
+    title: "The Watchman Who Slept Standing",
+    text: `
+      <h1>The Watchman Who Slept Standing</h1>
+      <p>Listen carefully, my friends, to a story of an old watchman named Baba Kofi who lived under a wide acacia tree at the edge of our village. Every night, Baba Kofi would stand tall at his post by the granary, keeping watch over the sleeping fields and huts. But Baba Kofi had an unusual habit: he often fell asleep standing up, as if he were as still as one of the village statues in the moonlight.</p>
+      <p>It began many years ago when Kofi was a young boy. His father was the watchman for the village, and the old man taught him that even the starlight needed someone to guard the night. Father once joked that the best way to keep watching was to sleep standing up, so one would never fall. Kofi took that advice to heart—perhaps too literally.</p>
+      <p>As a young apprentice under his father’s tall wooden staff, Kofi would practice standing without moving. He loved to stay awake under the African sky, humming softly a lullaby his mother had taught him, listening to the stories of the elders by firelight. Night after night, he stood at the gate of the village, listening to the songs of crickets and watching the fireflies dance. Yet sleep would come, bending Kofi’s eyelids like heavy shutters against a strong breeze. Slowly, his head would droop, and his knees would bend. But Kofi held fast. On especially sleepy nights he would set his chin upon his chest, arms crossed over his belly, swaying slightly. By sunrise, the children on their way to school would find the joke: “Look, Baba Kofi slept standing again!”</p>
+      <p>The elders of the village would sometimes worry. A guard who sleeps even with his eyes closed could be of no use, they said. “How can he protect us if he can’t stay awake?” the headman would ask, hand on his beard. But the next night, something wonderful happened: Kofi’s strange habit became a blessing.</p>
+      <p>It was on a dark night, thick with a starless sky, that danger crept near. A snake, black as midnight, slithered silently toward the granary. It was the time when both thieves and creatures prowled for food. The snake was hungry, looking for the grain to feast upon. As the snake approached, our Kofi stood there asleep, holding the same standing pose he always did. The snake moved slowly, coil by coil, drawn by the sound of a nearby goat.</p>
+      <p>From the side of the granary, a small goat with two curious kids had escaped into the fields and began to chew on a bale of hay. The goat, drunk with new freedom beyond the fence, bleated loudly in protest at the tasty grain. Startled, the snake froze in its tracks. In that moment, the sound of the goat’s bleat echoed through the night air. Baba Kofi, deep in his dream, lifted his head slightly toward the sound and tilted his chin upward, as if listening.</p>
+      <p>Then all happened in a breath. Just as the snake flicked out its tongue toward the hayloft, Kofi’s foot moved without waking him. With surprising speed for a sleepy guardian, he tapped his staff against the ground. The echo was as loud as thunder in the silent night. The snake, frightened and confused, froze for a moment before scuttling away, its long tail carving a furrow in the dirt.</p>
+      <p>The villagers, who had been hiding behind walls, saw it all with wide eyes. They watched as the old watchman, eyes still half-dreaming, stood firm and brave. The children were amazed: “He saved us while asleep!” they whispered in awe. Baba Kofi, awakened fully by the noise, saw the snake’s tail vanish into the shadows and felt proud.</p>
+      <p>At sunrise, Kofi walked around the granary. The headman and his neighbors came with water gourds and warm porridge. “We owe our safety to your loyalty, old friend,” they said. The children gathered in a circle, each one touching the spot where the snake had been. Some even patted Baba Kofi on the back, laughing and saying he was a mighty warrior. Kofi just smiled shyly, rubbing the sleep from his eyes.</p>
+      <p>That morning, when everyone gathered at the edge of the field, Kofi stood under the acacia tree again. Even though his legs were tired and he knew sleep would come again that night, he held his chest high, shoulders back. Now the villagers smiled instead of teasing, for they understood: even in sleep, Kofi was watching over them.</p>
+      <p>Baba Kofi learned something about himself that night. Standing guard was not just a duty—it was love for the village, deep as a mother’s lullaby. Even when sleep tried to steal his eyes, his heart remained awake and devoted.</p>
+      <p>From that day on, the watchman who slept standing became a village legend, not as a fool, but as a guardian whose vigil never truly ended. And every time Kofi felt the weight of sleep, he remembered the night of the snake, and that was enough to keep his eyes open long enough until dawn.</p>
+    `
+  },
+  {
+    title: "The Whistle That Refused to Blow",
+    text: `
+      <h1>The Whistle That Refused to Blow</h1>
+      <p>In a dusty village by the river, there was a watchman named Jelani who carried a brass whistle on a cord around his neck. This whistle was not just any whistle; it was a gift from his father, a watchman before him. Each morning at dawn Jelani would blow the whistle to ring in the new day for everyone – the farmers, the children, and the sleepy traders. But one morning, no sound came out.</p>
+      <p>Startled, Jelani tried again. He puffed up his chest and blew with all his might, red-cheeked and determined, but the whistle refused to sound. It made a hollow wheeze, like a frog croaking in the bushes, but not a true note. The villagers around the campfire stirred at the sound and whispered, “Is it still night?” But no, the sun was peeking over the hills.</p>
+      <p>Jelani felt his face flush with embarrassment. Every watchman before him had blown that morning whistle since the dawn of time. It was tradition. His father used to blow it when Jelani was just a boy, teaching the day to start. Now the whistle that once sang clear and strong was silent in his hands.</p>
+      <p>He tapped the whistle on the table and inspected it. The brass looked shiny but the opening was clogged with dust or maybe had a small dent. Jelani asked his neighbor, an old tinkerer named Baba Ndogo, to fix it. Baba Ndogo was wise and gentle, with a long white beard and fingers coated in grease. But when Baba Ndogo tried to blow the whistle, nothing happened for him either. He looked puzzled. “Hmm, it is as though this whistle has gone quiet on us,” he laughed kindly.</p>
+      <p>Word spread through the village: “The whistle has become mute,” the children teased. Jelani tried everything: he washed it carefully in clean river water, he shook it like a maraca under the sun, even fed it a drop of honey, hoping the sweetness would coax a tune. He wiggled in all directions, sang songs into it, but the whistle only gave breaths like whispering wind.</p>
+      <p>“Perhaps it’s jealous of you,” joked one wise old woman on the porch of the meeting hall. Jelani smiled weakly. A small child, little Anika, gathered around and said, “Maybe it just wants you to listen differently.” They all laughed at the idea of a whispering whistle that wanted a hug.</p>
+      <p>But Jelani was worried. The whistle was important: it called the midday bell for the village school and warned of storms. If it didn’t blow, how would people know? He thought of his father’s story: how he had given Jelani the whistle on a rainy morning, saying, “You will be the voice of dawn for this village.” Now that promise felt broken.</p>
+      <p>That evening, Jelani sat by the lantern, practicing. He blew on the empty air, making faces at his reflection. His grandson, little Simba, sat watching, mimicking with a toy horn. “Grandpa, make it laugh!” the boy giggled. Jelani tapped the whistle gently on his knee and said softly, “Sing with me, old friend.” For a while, he forgot it was supposed to whistle, and just hummed lullabies with the old brass at his lips.</p>
+      <p>Night came, and Jelani fell asleep still holding the whistle. His dreams were of bright sunshine and roaring winds, of the whistle rising like a golden bird and finally breaking into song. He dreamt that the whistle had a proud voice again.</p>
+      <p>Before the next sunrise, he awoke with a start: he had an idea. As the sky was just lightening, he tied the whistle to a wooden stick, making a little drumstick to tap it. Then he ran to the school compound. Teachers and children were already outside, rubbing their eyes and waiting.</p>
+      <p>With a drumstick of his choosing, Jelani tapped on the side of the whistle gently. To everyone’s surprise, the whistle made a soft whirr each time. It wasn’t exactly blowing, but the sound was musical, with a rhythm that felt like a morning song. The children smiled, closing their eyes, as if hearing a song of the sunshine.</p>
+      <p>Then, taking courage, Jelani raised his voice. In his deepest watchman baritone, he sang the old morning chant. The first notes were rough, but soon he remembered the words and tunes like riding a bicycle. The villagers who heard Jelani singing and tapping came out of their huts, their hearts warming.</p>
+      <p>When Jelani finished his song, the funny drumbeat from the whistle still ringing, there was silence for a moment. Then, village by village, the people began to laugh and clap. Even the birds seemed to join in with cheerful chirps, as if finally happy to wake up.</p>
+      <p>The headmaster of the school, a tall woman with kind eyes, came forward with a broad smile. “Jelani, you have awakened us in a new way,” she said. “Your voice and this rhythm have called the day. Your father would be proud of you for not giving up.”</p>
+      <p>Jelani felt tears in his eyes. The whistle still hadn’t blown a note, but he realized something important: the voice of a watchman was more than a whistle. It was the heart behind it. The village no longer needed the loud blast, because together they had found a song.</p>
+      <p>Later, when the sun was high, Jelani finally sat down with Baba Ndogo again. This time, instead of fixing the whistle, they placed it on a table between them. They let the morning laughter and singing fill the air.</p>
+      <p>As afternoon fell, Jelani walked by the river, the whistle swinging at his side like a treasure. A breeze blew and, to his surprise, the wind caught the whistle. It let out a clear, gentle note as it spun around his neck.</p>
+      <p>He smiled at the whistle in the dusk light. It was as if it had been shy the whole time and just needed him to find another way. “Thank you,” he whispered to the air.</p>
+      <p>And so, in that village by the river, the watchman and his whistle learned that even if the tool failed, a determined heart and a little creativity could find another tune. The whistle may have refused to blow on its own, but together with Jelani’s song it had finally sung again.</p>
+    `
+  },
+  {
+    title: "The Watchman and the Broken Chair",
+    text: `
+      <h1>The Watchman and the Broken Chair</h1>
+      <p>In the small village of M’basa, a watchman named Kwame sat every night by the fence upon his favorite chair. It was no ordinary chair: it was carved by his own father, sturdy and tall, with a back shaped like open palms to hold him. This chair had a story in every scratch and paint chip, like the old tractor in the field that carries stories of plowing rain and sun. It creaked and groaned sometimes under his weight, but it was home.</p>
+      <p>Each night as Kwame sat on that chair, he felt like a king on a throne, though his kingdom was just the quiet village fields. Crickets would gather around him and sing lullabies. Sometimes a goat would wander up, smell the old wood, and knock gently at the legs, which always made Kwame laugh under his beard. Children loved to lean one way or the other to see if they could tip him—but the chair was firm.</p>
+      <p>One night after a long day, Kwame came early to his post, eager to rest. He settled slowly onto the old chair and leaned back with a contented sigh. The moon was full, spilling silver light on the old wood. Suddenly, <em>CRACK</em>! The back of the chair broke right down the middle, right under Kwame’s back, and he landed softly in the dirt with a thump. Dirt puffed around him as he sat startled on the ground.</p>
+      <p>For a moment Kwame just blinked at the broken pieces of his chair. His pride was seated on a cracked wooden leg. He felt a spike of pain in his bottom, and a disappointment deeper in his heart. “My chair,” he whispered. It was like losing a piece of himself, the chair he knew better than any friend.</p>
+      <p>A beetle crawling nearby paused and looked at Kwame as if to ask, “What now?” The old watchman ruffled his hair in surprise. “Well,” he said to the beetle and to the silent night, “even chairs can get tired.” Then he stood up, dusting off his pants. He walked around the cracked chair, inspecting the snap. It was exactly split, a straight line dividing the palm-shaped back.</p>
+      <p>Kwame felt foolish, sitting on his bottom like a child. He chuckled at the situation. “It seems I’ve been the chair’s chair,” he said with a grin. “Now you need to stand, old friend!” He leaned the broken back against the fence post and drew a deep breath of fresh evening air. The stars blinked above, as if whispering, “All is well.”</p>
+      <p>The next morning, as the sun painted the sky pink, a few villagers noticed something odd by the fence. Farmer Ada was carrying water to the crops and spotted Kwame standing guard, no chair. “No chair today, Kwame?” she asked with a teasing smile. “Not even for a watchman who sleeps standing?” she laughed.</p>
+      <p>Kwame smiled. “The chair and I had a disagreement,” he said. “It seems we must learn to stand together now.” The villagers gave a gentle chuckle, understanding. Ada patted the broken chair behind him. “We will fix it, don’t worry.”</p>
+      <p>Just then, the village carpenter Mosi walked by and saw the broken chair. A mischievous grin crossed his face. “Mind if I borrow that chair, old friend?” he said, picking it up. Kwame protested, “Bring it back in one piece or else!” But Mosi just winked.</p>
+      <p>By evening, other watchmen began arriving for their shifts and heard the tale. They found Kwame standing tall but missing his seat. Even the goats looked at the dismantled chair mournfully. By twilight, they decided something had to be done.</p>
+      <p>Late that night, under the silver moon, a quiet mission took place. Several villagers tiptoed to Mosi’s workshop and returned with tools and wood, like quiet chameleons in the night. They worked swiftly: nails were hammered, wood was glued, and a new plank was fitted. Under the acacia, they pieced the chair back together.</p>
+      <p>As night deepened, they placed the chair by the fence post once again. It looked nearly the same, but stronger now: metal straps held the split in place, and fresh planks reinforced the seat. It still had its familiar scratches, but now it had new ribbons of silver metal glinting along the back, crisscrossing to show it had survived.</p>
+      <p>Just before Kwame’s shift ended and the sun was about to rise, the newly repaired chair swayed gently in the breeze as if waiting for him. The watchmen quietly turned off the lantern lights and crept away, leaving the village’s beloved chair alone with the stars.</p>
+      <p>When Kwame returned for his next night shift, he found the chair standing at attention by the fence, looking as though nothing had happened except for those shining metal stripes. He scratched his head and blinked. “What magic is this?” he murmured.</p>
+      <p>He cautiously sat back down. The chair held strong, cradling him firmly. Kwame almost cried out in surprise and relief. “Oh, you tricked me!” he exclaimed softly. He ran a hand over the silver strap.</p>
+      <p>At that moment, a soft cough sounded behind him. The headman of the village stood by the entrance, one hand on his farming coat. He gave a gentle bow and a proud smile. “We heard about your broken throne, Kwame,” he said kindly. “We share this watch with you, old friend. A chair holds one man, but many hands can mend it.”</p>
+      <p>Kwame felt warmth fill his chest. He stood up and gave the headman a grateful hug – no chair needed for that. The other watchmen emerged from the shadows, standing with him under the moonlight. Ada and Mosi joined with wide grins.</p>
+      <p>That night, Kwame perched on his newly strong chair with pride. Every creak now felt like a friendly greeting. The silver straps gleamed softly and reminded him of the hands that helped. He knew he could always stand if needed, but it was good to sit again – on a chair as strong as the community around him.</p>
+      <p>From that time on, whenever Kwame sat on the chair, he remembered the lesson: a broken leg is easier to bear when friends help you stand tall. And so, the chair and the watchman learned to stand together, always.</p>
+    `
+  },
+  {
+    title: "When the Watchman Looked Away",
+    text: `
+      <h1>When the Watchman Looked Away</h1>
+      <p>Once, in the golden haze of a sunrise, a watchman named Jabari sat atop the old wooden wall of Kasiri village. Every morning, he would climb that wall and scan the dusty path for any trouble as the village woke. Today, like every day, he sipped his warm tea and whistled a little tune.</p>
+      <p>As the first chicken in the yard let out a happy crow, Jabari’s eyes wandered to the river where a kingfisher’s bright feather shimmered in the sun. But soon something else caught his eye over the riverbank. A tall bush was rustling strangely. Curiously, Jabari leaned forward to see if it was a bird or a deer, and he turned his head to the left.</p>
+      <p>In that moment, he did not notice a group of village children who had sneaked outside. Their grandmother was busy cooking inside, and the children wanted to play with a brightly colored ball near the old well at the center of the village. They giggled and chased the ball between the shrubs, oblivious to everything else.</p>
+      <p>Suddenly, just as one child stretched to pick up the ball, the stone cover of the well tilted. Jabari heard a tiny shout: “Look out!” His eyes were elsewhere. A small boy’s foot slipped on the moss at the edge of the well, and in that instant everything seemed to stop. The children gasped and the ball flew into the air. Everything grew very quiet.</p>
+      <p>Another neighbor heard the shout and started to run out, but Jabari was already alert. He turned his head as fast as a man could. There was just a moment’s hesitation between the child and the pit. Jabari yelled, “Stop!” He leapt down from the wall without thinking.</p>
+      <p>In a flash, he caught the boy by the arm and pulled him back, saving the child’s life. The little boy yelped in fear, and Jabari held him tight before setting him safely on the ground. The four other children froze, their eyes wide. No one dared breathe.</p>
+      <p>He sat back on the wall, his heart still thudding in his chest. The morning was golden and calm again, as if nothing had happened—but Jabari knew otherwise. The children gathered around, each one whispering apologies. Little Lela, whose brother had almost fallen, tugged at Jabari’s sleeve and said, “I’m sorry, watchman.” Jabari gave her a gentle smile. “Thank the spirits he’s safe, little one,” he said, lifting the boy onto his lap and patting his head. The grandmother ran out and murmured grateful prayers.</p>
+      <p>“My duty is to watch over all of you,” Jabari told the children kindly. “Not just to spot dangers, but to help you grow up strong and wise. Remember, even a moment’s distraction can be dangerous.” The children nodded earnestly, eyes bright with understanding.</p>
+      <p>By the time the village was fully awake, news of the rescue had spread. Farmers and elders gathered by the steps of the wall with warm smiles. The headman came forward with a clapping hand on Jabari’s shoulder. “Well done, my friend,” he said. “Even watchmen can look away sometimes. Today you taught us all a lesson.”</p>
+      <p>Jabari took a deep breath and finally felt some strength return to his arms. “We will keep each other safe,” he promised. He noticed a small pot of kava on the headman’s table and accepted a cup gratefully, sipping it down to steady his nerves.</p>
+      <p>That morning, the village started early. Jabari walked among the fields, offering help wherever needed. He helped Grandma carry firewood—a small way to repay the gift of safety she had given. And everyone gave him extra bows and smiles as they passed, relieved and grateful.</p>
+      <p>From that day onward, Jabari did something new. Each morning, after climbing the wall, he would ask someone from the village, “Have you eaten today? Do you need a hand?” And while waiting for an answer, his eyes and thoughts might wander for a moment to the sunrise or a distant bird. Then he would gently bring his focus back to what was happening in the village.</p>
+      <p>One day, months later, when Jabari turned away to tie his sandal, he heard the distant crackle of flames. The pottery shed at the village’s edge had caught fire! He raised an alarm and ran to the shed just in time. The villagers worked together to beat out the flames before the roof collapsed. In that crisis, Jabari realized that even if his eyes sometimes wandered, his ears and heart were always listening.</p>
+      <p>Years later, Jabari became known as the watchman who knew how to look away and when to listen. Each morning he still climbed the wall as the sun rose, sometimes allowing his gaze to wander, greeting the dawn. But he always remembered to look back at the village—catching the laughter of children, the patter of goats, and the corners where mischief might hide.</p>
+      <p>One morning, a boy who had been there that day climbed the wall with him. “Show me again how you do it, Jabari,” the young man said. Jabari smiled and patted the boy’s shoulder. “It is simple,” he said softly. “Look at the world with open eyes, and at your heart with care. Let your spirit wander a bit, but never let it wander so far that you miss what truly matters.”</p>
+      <p>With that, Jabari took a long sip of his warm tea, his eyes twinkling at the rising sun. He had learned that sometimes you may look away to see the whole picture, but you always remember what truly matters by looking back again.</p>
+    `
+  }
+];
+
+/* render story cards (remove old small placeholders and replace) */
+const container = document.getElementById('story-container');
+container.innerHTML = ''; // clear existing content if any
+stories.forEach(s => {
+  let card = document.createElement('div');
+  card.className = 'story-card';
+  card.innerHTML = `<h3>${s.title}</h3><p class="meta">Click to unroll the scroll</p>`;
+  card.onclick = () => {
+    document.getElementById('reader-inner').innerHTML = s.text;
+    document.getElementById('reader').style.display = 'block';
+    document.getElementById('reader').scrollTop = 0;
+  };
+  container.appendChild(card);
+});
+
+function closeReader() { document.getElementById('reader').style.display = 'none'; }
+</script>
+</body>
+  </html> 
