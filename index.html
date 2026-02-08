@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>The Watchman’s Hour | Scribe of Zion</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Montserrat:wght@300;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root { 
+            --gold: #D4AF37; 
+            --glass: rgba(255, 255, 255, 0.05); 
+            --glass-border: rgba(212, 175, 55, 0.3); 
+            --void: #050505; 
+        }
+
+        body { 
+            margin: 0; background: var(--void); color: #E0E0E0; 
+            font-family: 'Montserrat', sans-serif; overflow-x: hidden; 
+        }
+
+        /* BACKGROUND SYSTEM */
+        #bg-video-main { 
+            position: fixed; inset: 0; width: 100%; height: 100%; 
+            object-fit: cover; z-index: -10; filter: brightness(0.2); transition: 1.5s ease;
+        }
+
+        /* NAVIGATION */
+        .hamburger { 
+            position: fixed; top: 25px; right: 25px; font-size: 1.2rem; cursor: pointer; z-index: 10001; 
+            background: var(--glass); backdrop-filter: blur(10px); padding: 15px; border: 1px solid var(--glass-border); color: var(--gold); border-radius: 50%; 
+        }
+
+        .nav-menu { 
+            position: fixed; top: 0; right: -100%; height: 100%; width: 100%; max-width: 300px; 
+            background: rgba(5, 5, 5, 0.98); backdrop-filter: blur(25px); border-left: 1px solid var(--glass-border); z-index: 10000; transition: 0.5s; 
+            display: flex; flex-direction: column; padding-top: 80px; 
+        }
+        .nav-menu.open { right: 0; }
+        .nav-menu a { color: white; text-decoration: none; padding: 20px 40px; border-bottom: 1px solid rgba(212,175,55,0.1); font-family: 'Cinzel'; font-size: 0.85rem; letter-spacing: 2px; }
+
+        /* PAGE ENGINE */
+        .page { position: absolute; inset: 0; width: 100%; min-height: 100vh; display: none; padding: 100px 20px 60px; box-sizing: border-box; }
+        .page.active { display: block; animation: pageFade 0.6s ease forwards; }
+        #home.active { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+        /* WATERMARK */
+        .watermark { 
+            position: absolute; bottom: 15px; left: 15px; font-family: 'Cinzel'; 
+            color: rgba(212, 175, 55, 0.45); font-size: 0.7rem; letter-spacing: 2px; 
+            pointer-events: none; z-index: 10; text-shadow: 2px 2px 4px black;
+        }
+
+        /* FOCUS ANIMATION CLASSES */
+        .tab-container { transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; }
+        .tab-container.focused { transform: translateY(-20px); }
+        .blurred-bg { filter: blur(25px) brightness(0.3) !important; }
+
+        /* DESIGN GRIDS */
+        .design-grid { display: none; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; max-width: 1400px; margin: 50px auto; }
+        .design-grid.active-section { display: grid; animation: fadeInUp 0.8s ease; }
+        
+        .design-card { 
+            position: relative; border-radius: 15px; height: 400px; overflow: hidden; 
+            border: 1px solid var(--glass-border); background: var(--glass); cursor: pointer;
+        }
+        .design-card video, .design-card img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+        .design-card:hover video, .design-card:hover img { transform: scale(1.05); }
+
+        /* VIDEO OVERLAY CONTROLS */
+        .play-hint {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.3); opacity: 0; transition: 0.3s; z-index: 5;
+        }
+        .design-card:hover .play-hint { opacity: 1; }
+        .play-hint i { color: var(--gold); font-size: 3.5rem; filter: drop-shadow(0 0 15px black); }
+
+        /* BUTTONS */
+        .tab-btn { background: var(--glass); border: 1px solid var(--glass-border); color: #888; font-family: 'Cinzel'; cursor: pointer; padding: 15px 30px; border-radius: 4px; transition: 0.4s; margin: 8px; letter-spacing: 2px; }
+        .tab-btn.active-tab { color: black; background: var(--gold); border-color: var(--gold); box-shadow: 0 0 30px rgba(212,175,55,0.4); }
+        .back-btn { background: var(--glass); border: 1px solid var(--glass-border); color: var(--gold); font-family: 'Cinzel'; cursor: pointer; padding: 12px 25px; border-radius: 5px; margin-bottom: 30px; display: inline-flex; align-items: center; gap: 10px; }
+
+        /* FULLSCREEN VIEWER */
+        #fullscreen-viewer { display: none; position: fixed; inset: 0; z-index: 30000; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; }
+        #viewer-container { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        #fullscreen-content { max-width: 95%; max-height: 85vh; border: 1px solid var(--gold); border-radius: 10px; box-shadow: 0 0 50px black; }
+
+        /* STORY READER */
+        #scribe-reader { display: none; position: fixed; inset: 0; z-index: 20000; background: rgba(5,5,5,0.98); backdrop-filter: blur(25px); align-items: center; justify-content: center; padding: 20px; }
+        .reader-box { max-width: 900px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 60px; border: 1px solid var(--gold); background: rgba(0,0,0,0.9); border-radius: 20px; line-height: 1.8; color: #f0f0f0; }
+        .reader-box h1, .reader-box h2 { font-family: 'Cinzel'; color: var(--gold); margin-top: 0; }
+        .reader-box p { font-size: 1.1rem; margin-bottom: 25px; }
+
+        .section-title { text-align: center; font-family: 'Cinzel'; color: var(--gold); margin-bottom: 40px; font-size: 2.5rem; letter-spacing: 3px; }
+        .wa-float { position: fixed; bottom: 30px; right: 30px; background: #25d366; width: 65px; height: 65px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: white; z-index: 10001; text-decoration: none; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+
+        @keyframes pageFade { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<video id="bg-video-main" src="animate 5.mp4" autoplay muted loop playsinline></video>
+
+<div class="hamburger" onclick="toggleNav()"><i class="fas fa-bars"></i></div>
+
+<nav class="nav-menu" id="nav-menu">
+    <a href="#" onclick="showPage('home')">Home</a>
+    <a href="#" onclick="showPage('designs')">Our Designs</a>
+    <a href="#" onclick="showPage('academy')">Enroll Now</a>
+    <a href="#" onclick="showPage('stories')">The Master Scrolls</a>
+    <a href="#" onclick="showPage('contact')">Contact</a>
+</nav>
+
+<div id="home" class="page active">
+    <div>
+        <h1 style="font-family:'Cinzel'; font-size: clamp(2.5rem, 8vw, 6rem); color: var(--gold); margin: 0; text-shadow: 0 0 30px rgba(0,0,0,1);">THE WATCHMAN’S PEN</h1>
+        <p style="letter-spacing: 12px; color: #ccc; font-size: 0.9rem; margin: 30px 0 50px; text-transform: uppercase; font-weight: 300;">Impressing Beyond Repair</p>
+        <button onclick="showPage('designs')" style="padding: 22px 55px; border: 1px solid var(--gold); background: rgba(212,175,55,0.05); color: var(--gold); font-family: 'Cinzel'; cursor: pointer; letter-spacing: 5px; font-weight: bold; transition: 0.4s;">OUR DESIGNS</button>
+    </div>
+</div>
+
+<div id="designs" class="page">
+    <button class="back-btn" onclick="showPage('home')"><i class="fas fa-arrow-left"></i> EXIT ARCHIVES</button>
+    
+    <div class="tab-container" id="tab-controls">
+        <h1 class="section-title" id="design-header">Archives</h1>
+        <div id="tab-buttons">
+            <button class="tab-btn" onclick="focusTab('animations', this)">Logo Animations</button>
+            <button class="tab-btn" onclick="focusTab('posters', this)">Posters</button>
+            <button class="tab-btn" onclick="focusTab('logos', this)">Logos</button>
+            <button class="tab-btn" onclick="focusTab('motion', this)">Motion Graphics</button>
+        </div>
+    </div>
+
+    <div id="animations" class="design-grid">
+        <div class="design-card" onclick="fullView('animate 1.mp4', 'video')"><video src="animate 1.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('animate 2.mp4', 'video')"><video src="animate 2.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('animate 3.mp4', 'video')"><video src="animate 3.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('animate 4.mp4', 'video')"><video src="animate 4.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('animate 5.mp4', 'video')"><video src="animate 5.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('animate 6.mp4', 'video')"><video src="animate 6.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('animate.mp4', 'video')"><video src="animate.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+    </div>
+
+    <div id="posters" class="design-grid">
+        <div class="design-card" onclick="fullView('poster 1.png', 'img')"><img src="poster 1.png"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('poster 2.png', 'img')"><img src="poster 2.png"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('poster 3.png', 'img')"><img src="poster 3.png"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('poster 4.png', 'img')"><img src="poster 4.png"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('poster 5.jpg', 'img')"><img src="poster 5.jpg"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('poster 6.jpg', 'img')"><img src="poster 6.jpg"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('poster 7.jpg', 'img')"><img src="poster 7.jpg"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('poster.png', 'img')"><img src="poster.png"><span class="watermark">THE WATCHMANS PEN</span></div>
+    </div>
+
+    <div id="logos" class="design-grid">
+        <div class="design-card" onclick="fullView('portfolio 2.jpg', 'img')"><img src="portfolio 2.jpg"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('portfolio 3.jpg', 'img')"><img src="portfolio 3.jpg"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('portfolio 4.jpg', 'img')"><img src="portfolio 4.jpg"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('portfolio 6.jpg', 'img')"><img src="portfolio 6.jpg"><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('portfolio 7.jpg', 'img')"><img src="portfolio 7.jpg"><span class="watermark">THE WATCHMANS PEN</span></div>
+    </div>
+
+    <div id="motion" class="design-grid">
+        <div class="design-card" onclick="fullView('real 2.mp4', 'video')"><video src="real 2.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('real 3.mp4', 'video')"><video src="real 3.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('real 4.mp4', 'video')"><video src="real 4.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('real 8.mp4', 'video')"><video src="real 8.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+        <div class="design-card" onclick="fullView('Real one.mp4', 'video')"><video src="Real one.mp4" loop muted></video><div class="play-hint"><i class="fas fa-play"></i></div><span class="watermark">THE WATCHMANS PEN</span></div>
+    </div>
+</div>
+
+<div id="fullscreen-viewer">
+    <button class="tab-btn active-tab" onclick="closeFull()" style="position:fixed; top:30px; left:30px; z-index:30005; min-width:120px;"><i class="fas fa-arrow-left"></i> BACK</button>
+    <div id="viewer-container">
+        </div>
+</div>
+
+<div id="academy" class="page">
+    <button class="back-btn" onclick="showPage('home')"><i class="fas fa-arrow-left"></i> BACK</button>
+    <h1 class="section-title">Enrolment</h1>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1100px; margin: auto;">
+        <div class="design-card" style="padding: 50px; text-align: center; height: auto;">
+            <h3 style="font-family: 'Cinzel'; color: var(--gold);">Logo Identity</h3>
+            <h2 style="font-size: 3rem; margin: 20px 0;">N$ 50</h2>
+            <a href="https://wa.me/264814308121?text=Logo Class Enrollment" class="tab-btn active-tab" style="display: block; text-decoration: none;">ENROLL NOW</a>
+        </div>
+        <div class="design-card" style="padding: 50px; text-align: center; height: auto; border-color: var(--gold);">
+            <h3 style="font-family: 'Cinzel'; color: var(--gold);">Poster Design</h3>
+            <h2 style="font-size: 3rem; margin: 20px 0;">N$ 150</h2>
+            <a href="https://wa.me/264814308121?text=Poster Class Enrollment" class="tab-btn active-tab" style="display: block; text-decoration: none;">ENROLL NOW</a>
+        </div>
+        <div class="design-card" style="padding: 50px; text-align: center; height: auto;">
+            <h3 style="font-family: 'Cinzel'; color: var(--gold);">Motion Graphics</h3>
+            <h2 style="font-size: 3rem; margin: 20px 0;">N$ 300</h2>
+            <a href="https://wa.me/264814308121?text=Motion Graphics Enrollment" class="tab-btn active-tab" style="display: block; text-decoration: none;">ENROLL NOW</a>
+        </div>
+    </div>
+</div>
+
+<div id="stories" class="page">
+    <button class="back-btn" onclick="showPage('home')"><i class="fas fa-arrow-left"></i> BACK</button>
+    <h1 class="section-title">The Master Scrolls</h1>
+    <div id="story-container" style="max-width: 900px; margin: auto;"></div>
+</div>
+
+<div id="contact" class="page">
+    <button class="back-btn" onclick="showPage('home')"><i class="fas fa-arrow-left"></i> BACK</button>
+    <h1 class="section-title">The Watchman’s Sanctuary</h1>
+    <div class="design-card" style="max-width: 600px; margin: auto; height: auto; padding: 60px; text-align: center;">
+        <h2 style="font-size: 2.5rem; color: var(--gold); margin-bottom: 25px;">+264 81 430 8121</h2>
+        <div style="display: flex; justify-content: center; gap: 50px; font-size: 3rem;">
+            <a href="https://www.instagram.com/the_watchmans_pen_?" target="_blank" style="color: var(--gold);"><i class="fab fa-instagram"></i></a>
+            <a href="https://tiktok.com/@the.watchmans.pen" target="_blank" style="color: var(--gold);"><i class="fab fa-tiktok"></i></a>
+        </div>
+    </div>
+</div>
+
+<div id="scribe-reader">
+    <button class="tab-btn active-tab" onclick="closeReader()" style="position:fixed; top:30px; right:30px; z-index:30000;">CLOSE SCROLL</button>
+    <div class="reader-box" id="reader-content"></div>
+</div>
+
+<a href="https://wa.me/264814308121" class="wa-float" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+<script>
+    function toggleNav() { document.getElementById('nav-menu').classList.toggle('open'); }
+    
+    function showPage(id) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.getElementById('nav-menu').classList.remove('open');
+        if(id !== 'designs') resetDesignView();
+        window.scrollTo(0,0);
+    }
+
+    // FOCUS CATEGORY ENGINE
+    function focusTab(sectionId, btn) {
+        document.getElementById('bg-video-main').classList.add('blurred-bg');
+        document.getElementById('tab-controls').classList.add('focused');
+        document.getElementById('design-header').innerText = btn.innerText;
+        document.getElementById('tab-buttons').style.display = 'none';
+
+        if(!document.getElementById('focus-back')){
+            let back = document.createElement('button');
+            back.id = 'focus-back';
+            back.className = 'tab-btn active-tab';
+            back.innerHTML = '<i class="fas fa-th"></i> BROWSE ALL CATEGORIES';
+            back.onclick = resetDesignView;
+            document.getElementById('tab-controls').appendChild(back);
+        }
+
+        document.querySelectorAll('.design-grid').forEach(sec => sec.classList.remove('active-section'));
+        document.getElementById(sectionId).classList.add('active-section');
+    }
+
+    function resetDesignView() {
+        document.getElementById('bg-video-main').classList.remove('blurred-bg');
+        document.getElementById('tab-controls').classList.remove('focused');
+        document.getElementById('design-header').innerText = "Archives";
+        document.getElementById('tab-buttons').style.display = 'block';
+        if(document.getElementById('focus-back')) document.getElementById('focus-back').remove();
+        document.querySelectorAll('.design-grid').forEach(sec => sec.classList.remove('active-section'));
+    }
+
+    // FULLSCREEN & CONTROLS (VOLUME/PLAY ENABLED)
+    function fullView(src, type) {
+        const viewer = document.getElementById('fullscreen-viewer');
+        const container = document.getElementById('viewer-container');
+        container.innerHTML = type === 'video' ? 
+            `<video id="fullscreen-content" src="${src}" controls autoplay></video><span class="watermark" style="font-size:1.5rem; opacity:0.2;">THE WATCHMANS PEN</span>` : 
+            `<img id="fullscreen-content" src="${src}"><span class="watermark" style="font-size:1.5rem; opacity:0.2;">THE WATCHMANS PEN</span>`;
+        viewer.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeFull() { 
+        document.getElementById('fullscreen-viewer').style.display = 'none'; 
+        document.body.style.overflow = 'auto';
+        const v = document.getElementById('fullscreen-content');
+        if(v && v.tagName === 'VIDEO') v.pause();
+    }
+
+    // THE FULL STORY SCROLLS (UNABRIDGED)
+    const theStory = [
+        { 
+            chapter: "Chapter 1", 
+            title: "The Watchman of Kavango", 
+            text: `<h1>Chapter 1</h1><h2>The Watchman of Kavango</h2>
+            <p>In the golden land of Kavango, where the river pulses like the veins of the earth and the winds carry the scent of ancient wood, there lived a man named Joshua. He was not a king, nor was he a soldier, but he was a Watchman. He was appointed by the Most High to stand upon the spiritual towers and observe the movement of the heavens.</p>
+            <p>One quiet Tuesday night, while the rest of the world slept in the comfort of shadows, Joshua knelt in prayer. The atmosphere shifted. A light, not born of any sun, filled the room. An angel of the Lord appeared, holding a vessel of shimmering ink. "Joshua, Scribe of Zion, behold! I bring you a gift from the Throne."</p>
+            <p>"A pen shall be given to you," the angel continued. "With this instrument, you will not merely draw shapes; you will write visions. You will reveal the hidden mysteries of the kingdom and expose the works that the marine powers hide in the deep darkness." Joshua reached out, his hand trembling as he took the pen. It felt alive, humming with a frequency that vibrated through his very soul.</p>` 
+        },
+        { 
+            chapter: "Chapter 2", 
+            title: "The First Vision", 
+            text: `<h1>Chapter 2</h1><h2>The First Vision</h2>
+            <p>With the new pen in his hand, Joshua sat before a blank canvas. He did not think; he simply allowed his hand to be guided. As the nib touched the surface, the ink did not just sit there—it breathed. He drew a great lion standing atop a mountain, and as he finished the final stroke, the room was filled with a thunderous roar that shook the foundations of the house.</p>
+            <p>Suddenly, the canvas began to overflow with water. It was not physical water, but a spiritual manifestation. The water hissed as it touched the floor, turning into a mist that revealed faces of people trapped in the deep. Joshua realized then that his art was a bridge. It was a weapon. The pen was not just for beauty; it was for the liberation of the oppressed.</p>
+            <p>A voice echoed from the mist: "What you see, record. What I show you, reveal to the nations. For you are the Watchman, and your pen shall be the key to many doors." Joshua began to draw again, his heart set ablaze with a holy fire.</p>` 
+        },
+        { 
+            chapter: "Chapter 3", 
+            title: "Parables of the Pen", 
+            text: `<h1>Chapter 3</h1><h2>Parables of the Pen</h2>
+            <p>The Lord began to instruct Joshua in the language of Parables. Each design was a lesson. He drew a shepherd carrying two flocks—one of sheep and one of stars. The parable was clear: God cares for the small and the infinite alike.</p>
+            <p>He drew a tree planted by a river whose roots were made of scripture. The leaves were made of healing, and the fruit was made of peace. As people looked upon these designs, their hearts began to change. Heavy spirits were lifted, and clouded minds found clarity. The ink of the Watchman carried the weight of the Word.</p>
+            <p>"My pen is my voice," Joshua whispered. He saw how the colors he chose weren't just aesthetic; they were spiritual frequencies. Gold for the Glory, Blue for the Heavens, and White for the Purity of the Spirit. Every design became a silent sermon, reaching where words could not go.</p>` 
+        },
+        { 
+            chapter: "Chapter 4", 
+            title: "Angelic Allies", 
+            text: `<h1>Chapter 4</h1><h2>Angelic Allies</h2>
+            <p>As the influence of the Scribe grew, so did the opposition from the shadows. The marine powers, those who rule the depths of the spiritual seas, sent waves of distraction and fear against Joshua. They sought to steal the pen, for they knew that once a vision is made visible, their power to hide is broken.</p>
+            <p>In the heat of the battle, an angel named Sariel descended. His wings were like molten silver, and his eyes burned like coals from the altar of God. "Joshua, do not fear," Sariel declared, drawing a sword of light. "The host of heaven is with the Scribe of Zion. The marine powers have no authority over the ink of the Kingdom."</p>
+            <p>Together, they stood against the darkness. Sariel protected the tower while Joshua drew the blueprints of victory. He drew the defeat of the Leviathan, and as the ink dried, a great calm fell over the spiritual waters. The Watchman had stood his ground.</p>` 
+        },
+        { 
+            chapter: "Chapter 5", 
+            title: "The Scribe of Zion", 
+            text: `<h1>Chapter 5</h1><h2>The Scribe of Zion</h2>
+            <p>Joshua was no longer just a man from Kavango; he had become the Scribe of Zion. He traveled through the realms of the spirit, bringing back visions that transformed the physical world. His designs were seen in the cities and the villages, each one carrying the signature of the Master Designer.</p>
+            <p>He taught others how to see, how to observe the times, and how to use their gifts for the King. "The pen is mightier than the sword," he would say, "when the pen is held by one who walks with God." Joshua remained humble, always returning to his tower in Kavango to wait for the next instruction.</p>
+            <p>The mission continues. To this day, the Watchman stays awake while the world sleeps, his pen moving across the canvas of eternity, revealing the beauty of the Lord and the triumph of the light. Every stroke is a prayer. Every design is a prophecy. And the story is only just beginning.</p>` 
+        }
+    ];
+
+    const sContainer = document.getElementById('story-container');
+    theStory.forEach((s, index) => {
+        let div = document.createElement('div');
+        div.className = 'design-card';
+        div.style.cssText = 'height:auto; margin-bottom:25px; padding:35px;';
+        div.innerHTML = `<span style="color:var(--gold); font-family:'Cinzel'; font-size: 0.9rem;">${s.chapter}</span><h3 style="color:white; margin:15px 0 0; font-family:'Cinzel'; font-size: 1.4rem;">${s.title}</h3>`;
+        div.onclick = () => openReader(index);
+        sContainer.appendChild(div);
+    });
+
+    function openReader(index) {
+        const contentDiv = document.getElementById('reader-content');
+        contentDiv.innerHTML = theStory[index].text;
+        if (index < theStory.length - 1) {
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn active-tab';
+            btn.style.cssText = 'width:100%; margin-top:50px; font-weight:bold;';
+            btn.innerHTML = `OPEN NEXT SCROLL: ${theStory[index+1].title} →`;
+            btn.onclick = () => { openReader(index + 1); document.querySelector('.reader-box').scrollTop = 0; };
+            contentDiv.appendChild(btn);
+        }
+        document.getElementById('scribe-reader').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeReader() { 
+        document.getElementById('scribe-reader').style.display = 'none'; 
+        document.body.style.overflow = 'auto';
+    }
+</script>
+</body>
+</html>
